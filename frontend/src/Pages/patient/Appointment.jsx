@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { assets } from "../assets/assets_frontend/assets";
+import { AppContext } from "../../context/AppContext";
+import { assets } from "../../assets/assets_frontend/assets";
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -38,7 +38,7 @@ const Appointment = () => {
         currentDate.setDate(today.getDate() + i);
 
         let timeSlots = [];
-        for (let h = 10; h <= 20; h++) {
+        for (let h = 9; h <= 20; h++) {
           let time = `${h}:00 AM`;
           if (h >= 12) {
             time = `${h === 12 ? 12 : h - 12}:00 PM`;
@@ -108,68 +108,77 @@ const Appointment = () => {
           </div>
         </div>
 
-        {/* Booking Slots */}
-        <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-md">
-          <p className="text-2xl font-semibold mb-6 text-center text-gray-800">
+        {/* Booking Section */}
+        <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-10">
+          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
             Booking Slots
-          </p>
+          </h1>
 
-          {/* Days Row */}
-          <div className="flex justify-center gap-3 overflow-x-auto py-2">
+          {/* Days Navigation */}
+          <div className="flex justify-center gap-4 overflow-x-auto pb-4">
             {docSlots &&
               docSlots.map((daySlots, index) => (
                 <button
                   key={index}
-                  className={`px-5 py-3 text-md font-semibold rounded-full border border-gray-300 shadow-sm 
+                  className={`px-6 py-4 w-36 rounded-lg text-lg font-semibold transition 
                 ${
                   selectedDay === index
                     ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-800"
+                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                 }`}
                   onClick={() => {
                     setSelectedDay(index);
                     setSelectedSlot(null);
                   }}
                 >
-                  <p>{daysOfWeek[daySlots[0].datetime.getDay()]}</p>
-                  <p className="text-lg">{daySlots[0].datetime.getDate()}</p>
+                  <p>{daysOfWeek[new Date(daySlots[0].datetime).getDay()]}</p>
+                  <p className="text-xl font-bold">
+                    {new Date(daySlots[0].datetime).getDate()}
+                  </p>
                 </button>
               ))}
           </div>
 
-          {/* Slots for Selected Day */}
-          <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {/* Time Slots */}
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {docSlots.length > 0 && docSlots[selectedDay] ? (
               docSlots[selectedDay].map((slot, slotIndex) => (
                 <button
                   key={slotIndex}
-                  className={`px-4 py-2 rounded-full border border-gray-300 text-md font-semibold 
-        ${
-          selectedSlot === slotIndex
-            ? "bg-blue-500 text-white"
-            : "bg-white text-gray-700"
-        }`}
+                  className={`w-full h-20 rounded-lg font-medium text-lg flex items-center justify-center border 
+                transition-all hover:shadow-lg
+                ${
+                  selectedSlot === slotIndex
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-gray-800 border-gray-300"
+                }`}
                   onClick={() => setSelectedSlot(slotIndex)}
                 >
                   {slot.time}
                 </button>
               ))
             ) : (
-              <p className="text-gray-600 text-md">No slots available</p>
+              <p className="text-gray-600 text-md col-span-full">
+                No slots available
+              </p>
             )}
           </div>
 
           {/* Confirm Button */}
-          <div className="mt-6 text-center">
+          <div className="mt-10 text-center">
             <button
-              className="px-8 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition"
+              className={`px-10 py-4 text-lg font-semibold rounded-lg shadow-md transition
+            ${
+              selectedSlot !== null
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : "bg-gray-300 text-gray-600 cursor-not-allowed"
+            }`}
               disabled={selectedSlot === null}
             >
-              Book an appointment
+              Book an Appointment
             </button>
           </div>
         </div>
-
         {/* Related Doctors Section */}
         {docInfo && doctors && (
           <div className="mt-10">

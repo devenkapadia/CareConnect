@@ -44,4 +44,5 @@
 - Daily backup -> local files
 - greyLog (for logging)
 - reminder to patient (1hr) and doctors (10min)
+
 # DB Schema

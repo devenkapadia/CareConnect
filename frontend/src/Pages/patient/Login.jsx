@@ -1,81 +1,71 @@
 import React, { useState } from "react";
-import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate(); 
+  const { login } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
-  // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const host = "http://localhost:3001";
-    if (isSignup) {
-      console.log(host);
-      const response = await fetch(`${host}/api/v1/auth/registerPatient`, {
+    
+    const endpoint = isSignup
+      ? `${host}/api/v1/auth/registerPatient`
+      : `${host}/api/v1/auth/login`;
+    
+    const payload = isSignup
+      ? { name: formData.fullName, email: formData.email, password: formData.password }
+      : { email: formData.email, password: formData.password };
+
+    try {
+      const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name:formData.fullName,
-          email: formData.email,
-          password: formData.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+
       const json = await response.json();
-      console.log(json);
-      if (json.error) {
-        console.error(json.error);
+
+      if (!response.ok) {
+        setError(json.error || "Something went wrong");
         return;
       }
-      Cookies.set("token", json.token);
-      navigate('/login')
-    } else {
-      console.log(host);
-      const response = await fetch(`${host}/api/v1/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-      const json = await response.json();
-      console.log(json);
-      if (json.error) {
-        console.error(json.error);
-        return;
-      }
-      Cookies.set("token", json.token);
-      navigate('/')
+
+      // Use AuthContext login function
+      login(json.token);
+
+    } catch (error) {
+      setError("Failed to connect to server", error);
     }
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="bg-white p-8 shadow-lg rounded-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-lg bg-white p-10 rounded-2xl shadow-lg transform transition-all duration-500 hover:scale-105">
+        
+        <h2 className="text-3xl font-bold text-center text-gray-800">
           {isSignup ? "Create an Account" : "Welcome Back"}
         </h2>
+
         <p className="text-center text-gray-600 mt-2">
           {isSignup ? "Sign up to get started" : "Login to continue"}
         </p>
 
+        {error && (
+          <p className="text-red-500 text-center mt-4">{error}</p>
+        )}
+
         <form onSubmit={handleSubmit} className="mt-6">
-          {/* Full Name Field (Only for Signup) */}
           {isSignup && (
             <div className="mb-4">
               <label className="block text-gray-700">Full Name</label>
@@ -86,12 +76,11 @@ const Login = () => {
                 onChange={handleChange}
                 className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Enter your full name"
-                required={isSignup}
+                required
               />
             </div>
           )}
 
-          {/* Email Field */}
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
@@ -105,7 +94,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password Field */}
           <div className="mb-4">
             <label className="block text-gray-700">Password</label>
             <input
@@ -119,7 +107,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition"
@@ -128,7 +115,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Toggle Between Login & Signup */}
         <p className="text-center text-gray-600 mt-4">
           {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
