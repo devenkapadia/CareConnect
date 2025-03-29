@@ -1,4 +1,4 @@
 docker run -p 5050:80 \
-    -e "PGADMIN_DEFAULT_EMAIL=admin@admin.com" \
-    -e "PGADMIN_DEFAULT_PASSWORD=admin123" \
+    -e "PGADMIN_DEFAULT_EMAIL=a@a.com" \
+    -e "PGADMIN_DEFAULT_PASSWORD=QWERTqwert@12345" \
     -d dpage/pgadmin4

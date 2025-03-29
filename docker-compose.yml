@@ -6,6 +6,7 @@ services:
     container_name: postgres_db
     restart: always
     environment:
+      POSTGRES_USER: careconnect
       POSTGRES_PASSWORD: QWERTqwert@12345
     ports:
       - "5432:5432"
