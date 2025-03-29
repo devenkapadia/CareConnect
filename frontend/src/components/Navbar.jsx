@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
+  // const [showMenu, setShowMenu] = useState(false);
 
   // const [token, setToken] = useState(true);
   const token = Cookies.get("token");

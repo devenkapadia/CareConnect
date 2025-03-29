@@ -1,15 +1,17 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user } = useAuth();
-
-  if (!user) {
+  const token = Cookies.get("token");
+  const decoded = jwtDecode(token);
+  if (!decoded) {
+    console.log("here");
     return <Navigate to="/login" />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  if (!allowedRoles.includes(decoded.role)) {
     return <Navigate to="/" />;
   }
 

@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
     const token = Cookies.get("token");
     if (token) {
       const decoded = jwtDecode(token);
-      console.log(decoded)
       setUser(decoded);
     }
   }, []);
@@ -22,10 +21,11 @@ export const AuthProvider = ({ children }) => {
     Cookies.set("token", token);
     const decoded = jwtDecode(token);
     setUser(decoded);
-
-    if (decoded.role === "admin") {
+    console.log(decoded)
+    if (decoded.role === "ADMIN") {
       navigate("/admin");
-    } else if (decoded.role === "doctor") {
+      console.log("admin");
+    } else if (decoded.role === "DOCTOR") {
       navigate("/doctor");
     } else {
       navigate("/");
