@@ -20,6 +20,8 @@ CREATE TABLE doctors (
     started_year INT,
     consultation_fee DECIMAL(10,2),
     about TEXT,
+    degree VARCHAR(255),
+    address TEXT,
     image VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

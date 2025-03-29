@@ -45,6 +45,12 @@ public class Doctor {
     @Column(name = "image")
     private String image;
 
+    @Column(name = "degree")
+    private String degree;
+
+    @Column(name = "address")
+    private String address;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false, nullable = false)
     private Date created_at;

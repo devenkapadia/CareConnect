@@ -29,6 +29,8 @@ public class DoctorResponse {
         private BigDecimal consultation_fee;
         private String about;
         private String image;
+        private String degree;
+        private String address;
 
         public static BasicDetails fromEntity(Doctor doctor) {
             User user = doctor.getUser ();
@@ -43,6 +45,8 @@ public class DoctorResponse {
                     .consultation_fee(doctor.getConsultation_fee())
                     .about(doctor.getAbout())
                     .image(doctor.getImage())
+                    .degree(doctor.getDegree())
+                    .address(doctor.getAddress())
                     .build();
         }
     }
@@ -61,6 +65,8 @@ public class DoctorResponse {
             BigDecimal consultationFee,
             String about,
             String image,
+            String degree,
+            String address,
             Map<String, List<String>> slotsAvailable,
             List<AppointmentDetails> appointments
     ) {

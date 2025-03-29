@@ -83,6 +83,8 @@ public class DoctorService {
                 doctorData.getConsultation_fee(),
                 doctorData.getAbout(),
                 doctorData.getImage(),
+                doctorData.getDegree(),
+                doctorData.getAddress(),
                 availableSlots,
                 doctorAppointmentDetails
         );
