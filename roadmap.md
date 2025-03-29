@@ -6,19 +6,18 @@
 
 # Backend 
 ## User side
--   (doctor)/(getAll group by specialization)
+-   (doctor)/(getAll group by specialization) **DONE - BUT NEED TO SEE available tag**
 -   (doctor)/(id)
     - return detils + timeslots info
--   (doctor)/(book appointment)
--   (contact)/feedback
+-   (contact)/feedback **DONE**
 -   (appointment)
+    - book
     - payment
     - fetch
     - refund **REMOVED**
--   (patient)
-    - add
-    - get
-    - attached to appointment
+-   (patient) 
+    - add  **DONE**
+    - get **DONE**
 
 ## Doctor
 - (appointments)

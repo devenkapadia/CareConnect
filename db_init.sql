@@ -20,6 +20,9 @@ CREATE TABLE doctors (
     started_year INT,
     consultation_fee DECIMAL(10,2),
     about TEXT,
+    image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (doctor_id) REFERENCES app_users(user_id) ON DELETE CASCADE
 );
 
@@ -30,6 +33,8 @@ CREATE TABLE patients (
     last_name VARCHAR(100) NOT NULL,
     date_of_birth DATE,
     gender gender_type,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES app_users(user_id) ON DELETE CASCADE
 );
 
@@ -82,6 +87,14 @@ CREATE TABLE backup_logs (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 
+CREATE TABLE feedback (
+    feedback_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100),
+    email VARCHAR(255),
+    comments TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS app_users CASCADE;
