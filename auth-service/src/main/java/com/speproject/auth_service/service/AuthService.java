@@ -38,10 +38,9 @@ public class AuthService {
             throw new CustomException.UnauthorizedException("Invalid Username or Password!");
         }
         if (encryptionService.validates(request.password(), user.getPassword())) {
-            return jwHelper.generateToken(user.getId(),user.getName(),user.getEmail(),user.getRole());
+            return jwHelper.generateToken(user.getUser_id(),user.getName(),user.getEmail(),user.getRole());
         } else {
             throw new CustomException.UnauthorizedException("Invalid Username or Password!");
         }
     }
-
 }

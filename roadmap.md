@@ -14,7 +14,7 @@
 -   (appointment)
     - payment
     - fetch
-    - refund
+    - refund **REMOVED**
 -   (patient)
     - add
     - get
@@ -24,9 +24,9 @@
 - (appointments)
     - fetchAll
     - fetchOne
-    - refundApproval -> patient notify
-    - changeDateTime -> patient notify
-- (unavailble)
+    - refundApproval -> patient notify **REMOVED**
+    - changeDateTime -> patient notify **REMOVED**
+- (unavailble) **REMOVED**
     - byEvry
     - byDate
     - byDateRange

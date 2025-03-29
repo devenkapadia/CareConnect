@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -12,12 +14,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "app_users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    @Column(name = "user_id", updatable = false, nullable = false)
+    private UUID user_id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -30,4 +32,23 @@ public class User {
 
     @Column(name = "role", nullable = false)
     private String role;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private Date created_at;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updated_at;
+
+    @PrePersist
+    protected void onCreate() {
+        created_at = new Date();
+        updated_at = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updated_at = new Date();
+    }
 }

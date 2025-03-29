@@ -10,7 +10,7 @@ public class AuthRequest {
             @JsonProperty("name")
             String name,
 
-            @NotNull(message = "Employee email is required")
+            @NotNull(message = "Email is required")
             @Email(message = "Email must be in correct format")
             @JsonProperty("email")
             String email,
