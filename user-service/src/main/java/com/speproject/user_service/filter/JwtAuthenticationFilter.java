@@ -29,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Extract and validate JWT, returning the email if valid
             String id = authHelper.extractAndCheckJWT(request);
 
-
             // If JWT is valid and no authentication is set, create an Authentication object
             if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // Create an Authentication object with the email as the principal

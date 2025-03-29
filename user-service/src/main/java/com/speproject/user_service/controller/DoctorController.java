@@ -25,12 +25,9 @@ public class DoctorController {
         Map<String, List<DoctorResponse.BasicDetails>> doctors = doctorService.getALlDoctors(id);
         return ResponseEntity.ok(doctors);
     }
-/*
     @GetMapping("/{reqid}")
     public ResponseEntity<DoctorResponse.CompleteDetails> getDoctorById(@AuthenticationPrincipal String id, @PathVariable String reqid) {
-        DoctorResponse doctor = doctorService.getDoctorById(id,reqid);
+        DoctorResponse.CompleteDetails doctor = doctorService.getDoctorById(id,reqid);
         return ResponseEntity.ok(doctor);
     }
-
- */
 }

@@ -1,5 +1,6 @@
 package com.speproject.user_service.dto;
 
+import com.speproject.user_service.entity.Appointment;
 import com.speproject.user_service.entity.User;
 import com.speproject.user_service.entity.Doctor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -43,12 +46,24 @@ public class DoctorResponse {
                     .build();
         }
     }
+    public record AppointmentDetails(
+        UUID appointment_id,
+        String date,
+        String time
+    ){
 
-    @Data
-    @Builder
-    public static class CompleteDetails {
-        // Define fields for the additional response here
-        private String someField; // Example field
-        // Add more fields as needed
+    }
+    public record CompleteDetails(
+            UUID doctorId,
+            String name,
+            String specialization,
+            Integer yearsOfExperience,
+            BigDecimal consultationFee,
+            String about,
+            String image,
+            Map<String, List<String>> slotsAvailable,
+            List<AppointmentDetails> appointments
+    ) {
+        // You can add additional methods if needed
     }
 }

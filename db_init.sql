@@ -43,7 +43,8 @@ CREATE TABLE payments (
     amount DECIMAL(10,2) NOT NULL,
     payment_status payment_status DEFAULT 'PENDING',
     transaction_id VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE appointments (
@@ -52,8 +53,8 @@ CREATE TABLE appointments (
     user_id UUID NOT NULL,
     doctor_id UUID NOT NULL,
     payment_id UUID,
-    date DATE NOT NULL,
-    time TIME NOT NULL,
+    date VARCHAR(20) NOT NULL,
+    time VARCHAR(20) NOT NULL,
     status appointment_status DEFAULT 'PENDING',
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
