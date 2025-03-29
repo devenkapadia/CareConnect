@@ -43,7 +43,7 @@ const Contact = () => {
       {/* Contact Form */}
       <div className="mt-16 bg-white shadow-md rounded-lg p-8 max-w-3xl mx-auto transition-transform duration-300 hover:scale-105">
         <h2 className="text-2xl font-semibold text-gray-900 text-center">
-          Send Us a Message
+          Send Us a Feedback
         </h2>
         <form className="mt-6">
           <div className="mb-4">

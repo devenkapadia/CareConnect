@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate(); 
   const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -14,17 +17,51 @@ const Login = () => {
   };
 
   // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignup) {
-      console.log("Signing up with:", formData);
-      // Call Signup API here
-    } else {
-      console.log("Logging in with:", {
-        email: formData.email,
-        password: formData.password,
+      const host = "http://192.168.0.106:3001";
+      console.log(host);
+      const response = await fetch(`${host}/api/v1/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          
+        }),
       });
-      // Call Login API here
+      const json = await response.json();
+      console.log(json);
+      if (json.error) {
+        console.error(json.error);
+        return;
+      }
+      Cookies.set("token", json.token);
+      navigate('/')
+    } else {
+      const host = "http://192.168.0.106:3001";
+      console.log(host);
+      const response = await fetch(`${host}/api/v1/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      const json = await response.json();
+      console.log(json);
+      if (json.error) {
+        console.error(json.error);
+        return;
+      }
+      Cookies.set("token", json.token);
+      navigate('/')
     }
   };
 
