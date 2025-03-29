@@ -19,18 +19,18 @@ const Login = () => {
   // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const host = "http://localhost:3001";
     if (isSignup) {
-      const host = "http://192.168.0.106:3001";
       console.log(host);
-      const response = await fetch(`${host}/api/v1/auth/register`, {
+      const response = await fetch(`${host}/api/v1/auth/registerPatient`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          name:formData.fullName,
           email: formData.email,
           password: formData.password,
-          
         }),
       });
       const json = await response.json();
@@ -40,9 +40,8 @@ const Login = () => {
         return;
       }
       Cookies.set("token", json.token);
-      navigate('/')
+      navigate('/login')
     } else {
-      const host = "http://192.168.0.106:3001";
       console.log(host);
       const response = await fetch(`${host}/api/v1/auth/login`, {
         method: "POST",
