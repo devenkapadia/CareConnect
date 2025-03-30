@@ -15,7 +15,6 @@ const AdminNavbar = () => {
     <div className="flex items-center justify-between px-6 py-4 mb-5 border-b border-gray-300 bg-white shadow-sm">
       {/* Logo */}
       <img
-        onClick={() => navigate("/")}
         className="w-44 cursor-pointer hover:opacity-80 transition"
         src={assets.logo}
         alt="Logo"

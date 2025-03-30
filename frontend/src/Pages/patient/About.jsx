@@ -18,7 +18,7 @@ const About = () => {
             for seamless and hassle-free appointments.
           </p>
           <button
-            onClick={() => navigate("/appointments")}
+            onClick={() => navigate("/doctors")}
             className="mt-6 px-6 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition"
           >
             Book an Appointment
