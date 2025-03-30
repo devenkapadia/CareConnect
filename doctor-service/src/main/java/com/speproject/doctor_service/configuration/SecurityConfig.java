@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions with JWT
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/user/public/**").permitAll() // Allow public endpoints if any (e.g., login, register)
+                        .requestMatchers("/api/v1/doctor/public/**").permitAll() // Allow public endpoints if any (e.g., login, register)
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
