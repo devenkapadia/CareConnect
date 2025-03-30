@@ -1,4 +1,4 @@
-package com.speproject.user_service.entity;
+package com.speproject.doctor_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -69,7 +68,6 @@ public class Doctor {
     protected void onUpdate() {
         updated_at = new Date();
     }
-
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }

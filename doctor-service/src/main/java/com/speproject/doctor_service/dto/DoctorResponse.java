@@ -1,8 +1,7 @@
-package com.speproject.user_service.dto;
+package com.speproject.doctor_service.dto;
 
-import com.speproject.user_service.entity.Appointment;
-import com.speproject.user_service.entity.User;
-import com.speproject.user_service.entity.Doctor;
+import com.speproject.doctor_service.entity.Doctor;
+import com.speproject.doctor_service.entity.User;
 import lombok.Builder;
 import lombok.Data;
 

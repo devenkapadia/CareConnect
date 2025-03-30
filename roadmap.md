@@ -8,12 +8,12 @@
 ## User side
 -   (doctor)/(getAll group by specialization) **DONE - BUT NEED TO SEE available tag**
 -   (doctor)/(id)
-    - return detils + timeslots info
+    - return detils + timeslots info  **DONE**
 -   (contact)/feedback **DONE**
 -   (appointment)
-    - book
+    - book  **DONE**
     - payment
-    - fetch
+    - fetch **DONE**
     - refund **REMOVED**
 -   (patient) 
     - add  **DONE**
