@@ -1,15 +1,14 @@
 package com.speproject.user_service.service;
 
+import com.speproject.user_service.dto.AppointmentResponse;
 import com.speproject.user_service.dto.DoctorResponse;
 import com.speproject.user_service.dto.PatientRequest;
 import com.speproject.user_service.dto.PatientResponse;
-import com.speproject.user_service.entity.Appointment;
-import com.speproject.user_service.entity.Doctor;
-import com.speproject.user_service.entity.Patient;
-import com.speproject.user_service.entity.User;
+import com.speproject.user_service.entity.*;
 import com.speproject.user_service.exception.CustomException;
 import com.speproject.user_service.mapper.PatientMapper;
 import com.speproject.user_service.repo.AppointmentRepo;
+import com.speproject.user_service.repo.ArchivedAppointmentRepo;
 import com.speproject.user_service.repo.DoctorRepo;
 import com.speproject.user_service.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class DoctorService {
     private final AppointmentRepo appointmentRepo;
     private final UserRepo userRepo;
     private final PatientMapper mapper;
-
+    private final ArchivedAppointmentRepo archivedAppointmentRepo;
     public Map<String, List<DoctorResponse.BasicDetails>> getALlDoctors(String id) {
         List<Doctor> doctors = repo.findAll();
         return doctors.stream()
@@ -61,17 +60,45 @@ public class DoctorService {
         if(myAppointments.isPresent()){
             appointments1 = myAppointments.get();
         }
-        List<DoctorResponse.AppointmentDetails> doctorAppointmentDetails = new ArrayList<>();
-        for(Appointment appointment : appointments1) {
-            DoctorResponse.AppointmentDetails temp = new DoctorResponse.AppointmentDetails(
-                appointment.getAppointment_id(),
-                appointment.getDate(),
-                appointment.getTime(),
-                appointment.getStatus().toString()
-            );
-            doctorAppointmentDetails.add(temp);
-        }
 
+        Map<String,List<AppointmentResponse.AppointmentDetails>> doctorAppointmentDetails = new HashMap<>();
+        Optional<List<Appointment>> appointmentsCurr = appointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id),UUID.fromString(reqid));
+        if(!appointmentsCurr.isEmpty()) {
+            List<AppointmentResponse.AppointmentDetails> pending = new ArrayList<>();
+            for (Appointment appointment : appointmentsCurr.get()) {
+                DoctorResponse.BasicDetails doctorCuur = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
+                PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
+                AppointmentResponse.AppointmentDetails data = new AppointmentResponse.AppointmentDetails(
+                        appointment.getAppointment_id(),
+                        doctorCuur,
+                        patient,
+                        appointment.getDate(),
+                        appointment.getTime(),
+                        appointment.getStatus().toString()
+                );
+                pending.add(data);
+            }
+
+            doctorAppointmentDetails.put("pending_appointments", pending);
+        }
+        Optional<List<ArchivedAppointment>> archivedAppointments = archivedAppointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id),UUID.fromString(reqid));
+        if(!archivedAppointments.isEmpty()) {
+            List<AppointmentResponse.AppointmentDetails> old = new ArrayList<>();
+            for (ArchivedAppointment appointment : archivedAppointments.get()) {
+                DoctorResponse.BasicDetails doctorCuur = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
+                PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
+                AppointmentResponse.AppointmentDetails data = new AppointmentResponse.AppointmentDetails(
+                        appointment.getAppointment_id(),
+                        doctorCuur,
+                        patient,
+                        appointment.getDate(),
+                        appointment.getTime(),
+                        appointment.getStatus().toString()
+                );
+                old.add(data);
+            }
+            doctorAppointmentDetails.put("completed_appointments", old);
+        }
         int currentYear = new Date().getYear() + 1900;
         int yearsOfExperience = currentYear - doctorData.getStarted_year();
 

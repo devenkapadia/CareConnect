@@ -21,8 +21,9 @@
 
 ## Doctor
 - (appointments)
-    - fetchAll
-    - fetchOne
+    - fetchAll **DONE**
+    - fetchOne **NOT NEEDED**
+    - Approve **DONE**
     - refundApproval -> patient notify **REMOVED**
     - changeDateTime -> patient notify **REMOVED**
 - (unavailble) **REMOVED**

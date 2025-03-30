@@ -1,4 +1,4 @@
-package com.speproject.doctor_service.entity;
+package com.speproject.user_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "appointments")
-public class Appointment {
+@Table(name = "archived_appointments")
+public class ArchivedAppointment {
 
     public enum AppointmentStatus {
         PENDING,
@@ -27,7 +27,7 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "appointment_id", updatable = false, nullable = false)
-    private UUID id;
+    private UUID appointment_id;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false, foreignKey = @ForeignKey(name = "fk_appointment_patient"))

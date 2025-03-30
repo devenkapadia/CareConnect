@@ -1,17 +1,11 @@
 package com.speproject.user_service.service;
 
 import com.speproject.user_service.dto.*;
-import com.speproject.user_service.entity.Appointment;
-import com.speproject.user_service.entity.Doctor;
-import com.speproject.user_service.entity.Patient;
-import com.speproject.user_service.entity.User;
+import com.speproject.user_service.entity.*;
 import com.speproject.user_service.exception.CustomException;
 import com.speproject.user_service.mapper.AppointmentMapper;
 import com.speproject.user_service.mapper.PatientMapper;
-import com.speproject.user_service.repo.AppointmentRepo;
-import com.speproject.user_service.repo.DoctorRepo;
-import com.speproject.user_service.repo.PatientRepo;
-import com.speproject.user_service.repo.UserRepo;
+import com.speproject.user_service.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +25,9 @@ public class AppointmentService {
     private final PatientRepo patientRepo;
     private final DoctorRepo doctorRepo;
     private final AppointmentMapper mapper;
+    private final ArchivedAppointmentRepo archivedAppointmentRepo;
 
-    public List<AppointmentResponse.AppointmentDetails> makeAppointment(AppointmentRequest.AddRequest request, String id) {
+    public Map<String,List<AppointmentResponse.AppointmentDetails>> makeAppointment(AppointmentRequest.AddRequest request, String id) {
         Appointment appointment = mapper.toEntity(request,id);
         if(!id.equals(appointment.getUser().getId().toString())) {
             throw new CustomException.UnauthorizedException("User is not authorized to make appointment");
@@ -61,17 +56,16 @@ public class AppointmentService {
         appointment.setDoctor(doctor.get());
         appointment.setUser(user.get());
         repo.save(appointment);
-        List<AppointmentResponse.AppointmentDetails> allAppointments = new ArrayList<>();
-        allAppointments = getAllAppointments(id);
-        return allAppointments;
+        return getAllAppointments(id);
     }
 
-    public List<AppointmentResponse.AppointmentDetails> getAllAppointments(String id) {
+    public Map<String,List<AppointmentResponse.AppointmentDetails>> getAllAppointments(String id) {
+        Map<String,List<AppointmentResponse.AppointmentDetails>> output = new HashMap<>();
         Optional<List<Appointment>> appointments = repo.findByUser_Id(UUID.fromString(id));
         if(appointments.isEmpty()) {
-            return new ArrayList<>();
+            return output;
         }
-        List<AppointmentResponse.AppointmentDetails> output = new ArrayList<>();
+        List<AppointmentResponse.AppointmentDetails> pending = new ArrayList<>();
         for(Appointment appointment : appointments.get()) {
             DoctorResponse.BasicDetails doctor = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
             PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
@@ -83,8 +77,29 @@ public class AppointmentService {
                 appointment.getTime(),
                 appointment.getStatus().toString()
             );
-            output.add(data);
+            pending.add(data);
         }
+
+        output.put("pending_appointments", pending);
+        Optional<List<ArchivedAppointment>> archivedAppointments = archivedAppointmentRepo.findByUser_Id(UUID.fromString(id));
+        if(archivedAppointments.isEmpty()) {
+            return output;
+        }
+        List<AppointmentResponse.AppointmentDetails> old = new ArrayList<>();
+        for(ArchivedAppointment appointment : archivedAppointments.get()) {
+            DoctorResponse.BasicDetails doctor = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
+            PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
+            AppointmentResponse.AppointmentDetails data = new AppointmentResponse.AppointmentDetails(
+                    appointment.getAppointment_id(),
+                    doctor,
+                    patient,
+                    appointment.getDate(),
+                    appointment.getTime(),
+                    appointment.getStatus().toString()
+            );
+            old.add(data);
+        }
+        output.put("completed_appointments", old);
         return output;
     }
 

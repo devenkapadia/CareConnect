@@ -58,7 +58,7 @@ public class DoctorService {
         List<DoctorResponse.AppointmentDetails> doctorAppointmentDetails = new ArrayList<>();
         for(Appointment appointment : appointments1) {
             DoctorResponse.AppointmentDetails temp = new DoctorResponse.AppointmentDetails(
-                appointment.getAppointment_id(),
+                appointment.getId(),
                 appointment.getDate(),
                 appointment.getTime(),
                 appointment.getStatus().toString()

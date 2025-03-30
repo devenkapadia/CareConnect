@@ -69,7 +69,7 @@ public class DoctorResponse {
             String degree,
             String address,
             Map<String, List<String>> slots_available,
-            List<AppointmentDetails> appointments
+            Map<String,List<AppointmentResponse.AppointmentDetails>> appointments
     ) {
         // You can add additional methods if needed
     }

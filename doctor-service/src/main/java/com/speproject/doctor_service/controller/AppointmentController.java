@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,8 +18,14 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping
-    public ResponseEntity<List<AppointmentResponse.AppointmentDetails>> getAppointments(@AuthenticationPrincipal String id) {
-        List<AppointmentResponse.AppointmentDetails> appointments = appointmentService.getAllAppointments(id);
+    public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> getAppointments(@AuthenticationPrincipal String id) {
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.getAllAppointments(id);
+        return ResponseEntity.ok(appointments);
+    }
+
+    @PatchMapping("/{appid}")
+    public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> approveAppointment(@AuthenticationPrincipal String id,@PathVariable String appid){
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.approveAppointment(id,appid);
         return ResponseEntity.ok(appointments);
     }
 }

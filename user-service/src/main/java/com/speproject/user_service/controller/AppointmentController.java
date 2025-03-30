@@ -19,13 +19,13 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @PostMapping
-    public ResponseEntity<List<AppointmentResponse.AppointmentDetails>> makeAppointment(@AuthenticationPrincipal String id, @RequestBody @Valid AppointmentRequest.AddRequest addRequest) {
-        List<AppointmentResponse.AppointmentDetails> appointments = appointmentService.makeAppointment(addRequest,id);
+    public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> makeAppointment(@AuthenticationPrincipal String id, @RequestBody @Valid AppointmentRequest.AddRequest addRequest) {
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.makeAppointment(addRequest,id);
         return ResponseEntity.ok(appointments);
     }
     @GetMapping
-    public ResponseEntity<List<AppointmentResponse.AppointmentDetails>> getAppointments(@AuthenticationPrincipal String id) {
-        List<AppointmentResponse.AppointmentDetails> appointments = appointmentService.getAllAppointments(id);
+    public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> getAppointments(@AuthenticationPrincipal String id) {
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.getAllAppointments(id);
         return ResponseEntity.ok(appointments);
     }
 }
