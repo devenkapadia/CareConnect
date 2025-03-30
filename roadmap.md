@@ -33,11 +33,13 @@
     - byTime
 
 ## Admin
-- (stats)
+- (stats) **DONE**
     - return patients + doctors + user
-- (transactions)
+- (appointments) **DONE**
 - (doctor)
-    - CRUD
+    - CREATE
+    - LIST **DONE**
+    - DELETE
     
 # Microservices
 - Email notification

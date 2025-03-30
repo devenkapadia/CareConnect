@@ -1,9 +1,11 @@
 package com.speproject.doctor_service.service;
 
+import com.speproject.doctor_service.dto.AppointmentResponse;
 import com.speproject.doctor_service.dto.DoctorResponse;
 import com.speproject.doctor_service.entity.Appointment;
 import com.speproject.doctor_service.entity.Doctor;
 import com.speproject.doctor_service.exception.CustomException;
+import com.speproject.doctor_service.mapper.AppointmentMapper;
 import com.speproject.doctor_service.mapper.PatientMapper;
 import com.speproject.doctor_service.repo.AppointmentRepo;
 import com.speproject.doctor_service.repo.DoctorRepo;
@@ -22,13 +24,7 @@ public class DoctorService {
     private final AppointmentRepo appointmentRepo;
     private final UserRepo userRepo;
     private final PatientMapper mapper;
-
-    public Map<String, List<DoctorResponse.BasicDetails>> getALlDoctors(String id) {
-        List<Doctor> doctors = repo.findAll();
-        return doctors.stream()
-                .map(DoctorResponse.BasicDetails::fromEntity)
-                .collect(Collectors.groupingBy(DoctorResponse.BasicDetails::getSpecialization));
-    }
+    private final AppointmentService appointmentService;
 
     public DoctorResponse.CompleteDetails getDoctorById(String id) {
         Optional<Doctor> doctor = repo.findById(UUID.fromString(id));
@@ -49,23 +45,7 @@ public class DoctorService {
         }
 
         Map<String, List<String>> availableSlots = doctor.get().getAvailableSlots(bookedSlots);
-
-        Optional<List<Appointment>> myAppointments = appointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id),UUID.fromString(id));
-        List<Appointment> appointments1 = new ArrayList<>();
-        if(myAppointments.isPresent()){
-            appointments1 = myAppointments.get();
-        }
-        List<DoctorResponse.AppointmentDetails> doctorAppointmentDetails = new ArrayList<>();
-        for(Appointment appointment : appointments1) {
-            DoctorResponse.AppointmentDetails temp = new DoctorResponse.AppointmentDetails(
-                appointment.getId(),
-                appointment.getDate(),
-                appointment.getTime(),
-                appointment.getStatus().toString()
-            );
-            doctorAppointmentDetails.add(temp);
-        }
-
+        Map<String,List<AppointmentResponse.AppointmentDetails>> doctorAppointmentDetails = appointmentService.getAllAppointments(id);
         int currentYear = new Date().getYear() + 1900;
         int yearsOfExperience = currentYear - doctorData.getStarted_year();
 
