@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { specialityData } from "../assets/assets_frontend/assets";
+import { AppContext } from "../context/AppContext";
 
 const SpecialityMenu = () => {
+  const { speciality } = useContext(AppContext);
+  console.log(speciality);
+  
   return (
     <div id="speciality" className="px-6 md:px-10 lg:px-20 py-10">
       {/* Heading Section */}

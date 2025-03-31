@@ -5,8 +5,8 @@ import { assets } from "../../assets/assets_frontend/assets";
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySymbol } = useContext(AppContext);
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const { fetchDoctorById, currencySymbol, doctors } = useContext(AppContext);
 
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
@@ -15,12 +15,15 @@ const Appointment = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchDocInfo = () => {
-      const docInfo = doctors.find((doc) => doc._id === docId);
-      setDocInfo(docInfo || null);
+    const getDoctor = async () => {
+      const doc = await fetchDoctorById(docId);
+      setDocInfo(doc);
     };
-    fetchDocInfo();
-  }, [doctors, docId]);
+
+    getDoctor();
+  }, [docId, fetchDoctorById]);
+
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   useEffect(() => {
     if (docSlots.length > 0 && selectedDay >= docSlots.length) {
@@ -37,13 +40,29 @@ const Appointment = () => {
         let currentDate = new Date(today);
         currentDate.setDate(today.getDate() + i);
 
+        const formattedDate = currentDate
+          .toISOString()
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("-");
+
         let timeSlots = [];
         for (let h = 9; h <= 20; h++) {
           let time = `${h}:00 AM`;
           if (h >= 12) {
-            time = `${h === 12 ? 12 : h - 12}:00 PM`;
+            time = `${h}:00 PM`;
           }
-          timeSlots.push({ datetime: new Date(currentDate), time });
+
+          const isAvailable =
+            docInfo?.slotsAvailable[formattedDate]?.includes(`${h}:00`) ||
+            false;
+
+          timeSlots.push({
+            datetime: new Date(currentDate),
+            time,
+            available: isAvailable,
+          });
         }
 
         slots.push(timeSlots);
@@ -53,7 +72,11 @@ const Appointment = () => {
     };
 
     getAvailableSlots();
-  }, []);
+  }, [docId, docInfo]);
+
+  if (!docInfo) {
+    return <p>Loading...</p>;
+  }
 
   return (
     docInfo && (
@@ -82,11 +105,11 @@ const Appointment = () => {
 
             <p className="text-gray-700 text-lg">
               <span className="font-medium">{docInfo.degree}</span> -{" "}
-              {docInfo.speciality}
+              {docInfo.specialization}
             </p>
 
             <button className="px-6 py-2 text-md font-medium bg-blue-100 text-blue-800 rounded-full shadow-md">
-              {docInfo.experience} Years of Experience
+              {docInfo.years_of_experience} Years of Experience
             </button>
 
             <div className="pt-4 border-t border-gray-300">
@@ -143,19 +166,37 @@ const Appointment = () => {
           <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {docSlots.length > 0 && docSlots[selectedDay] ? (
               docSlots[selectedDay].map((slot, slotIndex) => (
-                <button
+                <div
                   key={slotIndex}
-                  className={`w-full h-20 rounded-lg font-medium text-lg flex items-center justify-center border 
-                transition-all hover:shadow-lg
-                ${
-                  selectedSlot === slotIndex
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-800 border-gray-300"
-                }`}
-                  onClick={() => setSelectedSlot(slotIndex)}
+                  className="relative group" // Added group for hover effect
                 >
-                  {slot.time}
-                </button>
+                  <button
+                    className={`w-full h-20 rounded-lg font-medium text-lg flex items-center justify-center border 
+                    transition-all hover:shadow-lg
+                    ${
+                      slot.available
+                        ? selectedSlot === slotIndex
+                          ? "bg-blue-500 text-white border-blue-500"
+                          : "bg-white text-gray-800 border-gray-300"
+                        : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                    }`}
+                    onClick={() => slot.available && setSelectedSlot(slotIndex)}
+                    disabled={!slot.available}
+                  >
+                    {slot.time}
+                  </button>
+
+                  {/* Tooltip on hover */}
+                  {!slot.available && (
+                    <div
+                      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-10 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                        bg-black text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
+                    >
+                      Slot not available
+                    </div>
+                  )}
+                </div>
               ))
             ) : (
               <p className="text-gray-600 text-md col-span-full">
@@ -179,6 +220,7 @@ const Appointment = () => {
             </button>
           </div>
         </div>
+
         {/* Related Doctors Section */}
         {docInfo && doctors && (
           <div className="mt-10">
@@ -191,8 +233,8 @@ const Appointment = () => {
               {doctors
                 .filter(
                   (doc) =>
-                    doc.speciality === docInfo.speciality &&
-                    doc._id !== docInfo._id
+                    doc.specialization === docInfo.specialization &&
+                    doc.doctor_id !== docInfo.doctor_id
                 )
                 .slice(0, 10) // Show only 10 related doctors
                 .map((doctor) => (
@@ -207,7 +249,7 @@ const Appointment = () => {
                     {/* Doctor Image */}
                     <img
                       src={doctor.image}
-                      alt={doctor.speciality}
+                      alt={doctor.specialization}
                       className="w-30 h-30 object-cover transition-transform duration-300 hover:scale-110"
                     />
 

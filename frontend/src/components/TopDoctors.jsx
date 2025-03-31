@@ -5,6 +5,7 @@ import { AppContext } from "../context/AppContext";
 const TopDoctors = () => {
   const navigate = useNavigate();
   const { doctors } = useContext(AppContext);
+  
   return (
     <div className="px-6 md:px-10 lg:px-20 py-10">
       {/* Heading Section */}
@@ -21,7 +22,7 @@ const TopDoctors = () => {
           <div
             key={doctor._id}
             className="flex flex-col items-center bg-white rounded-lg shadow-md p-4 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl"
-            onClick={() => navigate(`/appointment/${doctor._id}`)}
+            onClick={() => navigate(`/appointment/${doctor.doctor_id}`)}
           >
             {/* Doctor Image */}
             <img

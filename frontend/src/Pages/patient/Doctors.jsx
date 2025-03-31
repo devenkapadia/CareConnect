@@ -6,11 +6,11 @@ const Doctor = () => {
   const { speciality } = useParams(); // Get specialization from URL
   const navigate = useNavigate();
   const { doctors } = useContext(AppContext);
-
+  
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedSpeciality, setSelectedSpeciality] = useState(speciality || "");
 
-  const specializations = [...new Set(doctors.map((doc) => doc.speciality))];
+  const specializations = [...new Set(doctors.map((doc) => doc.specialization))];
 
   // Handle filter selection
   const handleFilterClick = (selected) => {
@@ -27,7 +27,7 @@ const Doctor = () => {
   useEffect(() => {
     if (speciality) {
       setSelectedSpeciality(speciality); // Sync state with URL param
-      setFilteredDoctors(doctors.filter((doc) => doc.speciality === speciality));
+      setFilteredDoctors(doctors.filter((doc) => doc.specialization === speciality));
     } else {
       setFilteredDoctors(doctors);
     }
@@ -62,7 +62,7 @@ const Doctor = () => {
             <div
               key={doctor._id}
               className="flex flex-col items-center bg-white rounded-lg shadow-md p-4 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl cursor-pointer"
-              onClick={() => navigate(`/appointment/${doctor._id}`)}
+              onClick={() => navigate(`/appointment/${doctor.doctor_id}`)}
             >
               <img
                 src={doctor.image}
