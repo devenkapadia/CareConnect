@@ -4,6 +4,7 @@ import com.speproject.user_service.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,7 +34,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions with JWT
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/user/public/**").permitAll() // Allow public endpoints if any (e.g., login, register)
+                        .requestMatchers("/api/v1/user/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/user/doctor").permitAll()
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter

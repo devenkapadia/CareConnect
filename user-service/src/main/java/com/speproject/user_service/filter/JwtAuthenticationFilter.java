@@ -43,4 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().write("Unauthorized: " + e.getMessage());
         }
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        return path.startsWith("/api/v1/user/public/") ||
+                (path.equals("/api/v1/user/doctor") && method.equals("GET"));
+    }
 }
