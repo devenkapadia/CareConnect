@@ -1,6 +1,7 @@
 package com.speproject.doctor_service.controller;
 
 import com.speproject.doctor_service.dto.*;
+import com.speproject.doctor_service.entity.Appointment;
 import com.speproject.doctor_service.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,14 @@ public class AppointmentController {
 
     @PatchMapping("/{appid}")
     public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> approveAppointment(@AuthenticationPrincipal String id,@PathVariable String appid){
-        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.approveAppointment(id,appid);
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.updateAppointment(id,appid,Appointment.AppointmentStatus.CONFIRMED);
         return ResponseEntity.ok(appointments);
     }
+
+    @PatchMapping("/reject/{appid}")
+    public ResponseEntity<Map<String, List<AppointmentResponse.AppointmentDetails>>> rejectAppointment(@AuthenticationPrincipal String id, @PathVariable String appid) {
+        Map<String, List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.updateAppointment(id, appid, Appointment.AppointmentStatus.CANCELLED);
+        return ResponseEntity.ok(appointments);
+    }
+
 }

@@ -68,7 +68,7 @@ public class AppointmentService {
         return output;
     }
 
-    public Map<String,List<AppointmentResponse.AppointmentDetails>> approveAppointment(String id, String appid) {
+    public Map<String,List<AppointmentResponse.AppointmentDetails>> updateAppointment(String id, String appid, Appointment.AppointmentStatus new_status) {
         Optional<Appointment> appointment = repo.findByIdAndDoctor_Id(UUID.fromString(appid),UUID.fromString(id));
         if(appointment.isEmpty()) {
             throw new CustomException.NotFound("Appointment not found");
@@ -88,7 +88,7 @@ public class AppointmentService {
             throw new CustomException.BadRequest("Only future appointments can be approved.");
         }
 
-        appointment1.setStatus(Appointment.AppointmentStatus.CONFIRMED);
+        appointment1.setStatus(new_status);
         repo.save(appointment1);
         return getAllAppointments(id);
     }
