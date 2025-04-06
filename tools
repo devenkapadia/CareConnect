@@ -2,3 +2,12 @@ docker run -p 5050:80 \
     -e "PGADMIN_DEFAULT_EMAIL=a@a.com" \
     -e "PGADMIN_DEFAULT_PASSWORD=QWERTqwert@12345" \
     -d dpage/pgadmin4
+
+ELK account:
+dosusmapgtvypgbsnl@ytnhy.com
+QWERTqwert@$$@12345
+
+-------------------------------------------------
+ELK index creation fix:
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_cluster/settings -d '{ "transient": { "cluster.routing.allocation.disk.threshold_enabled": false } }'
+curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'

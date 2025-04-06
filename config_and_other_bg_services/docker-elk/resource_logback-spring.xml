@@ -1,0 +1,35 @@
+<configuration>
+
+    <!-- Console Logging -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>localhost:5044</destination>
+           <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+               <customFields>{"service_name":"auth-service"}</customFields>
+           </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOGSTASH"/>
+     </root>
+
+ </configuration>
+------------------------------
+pom.xml
+------------------------------
+<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.0.1</version>
+</dependency>
+------------------------------
+app.properties
+------------------------------
+logging.config=classpath:logback-spring.xml
+
+<!-- Reference: https://medium.com/@sovisrushain/monitoring-spring-boot-microservices-logs-with-the-elk-stack-aeeaf3e98d7b -->

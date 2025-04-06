@@ -37,15 +37,26 @@
     - return patients + doctors + user
 - (appointments) **DONE**
 - (doctor)
-    - CREATE
+    - CREATE **DONE**
     - LIST **DONE**
-    - DELETE
+    - DELETE **DONE**
+    - UPDATE **PENDING**
     
 # Microservices
-- Email notification
+- Email notification (rabbitmq)
 - Cron job to shift old data
-- Daily backup -> local files
-- greyLog (for logging)
+- Daily backup -> local files cxc
+- Loki + Grafana **DONE** 
 - reminder to patient (1hr) and doctors (10min)
 
-# DB Schema
+
+20:00
+
+21:00
+
+every hour on exact time:
+        if current time 21:00
+                then move all the before one to archived 
+                notify the 22:00 guys about the meeting
+
+on 0:00 backup the data to a zip file
