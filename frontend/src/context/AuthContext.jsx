@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     Cookies.remove("token");
     setUser(null);
-    navigate("/login");
+    navigate("/");
   };
 
   return (

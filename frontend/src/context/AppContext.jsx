@@ -11,19 +11,9 @@ const AppContextProvider = (props) => {
 
   // Function to fetch doctors from API
   const fetchDoctors = async () => {
-    const token = Cookies.get("token"); // Get Bearer token from cookies
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-
     try {
       const response = await fetch("http://localhost:3002/api/v1/user/doctor", {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
       });
 
       if (!response.ok) {
@@ -42,19 +32,12 @@ const AppContextProvider = (props) => {
   };
 
   const fetchDoctorById = async (id) => {
-    const token = Cookies.get("token");
-    if (!token) {
-      console.error("No token found");
-      return null;
-    }
-
     try {
       const response = await fetch(
         `http://localhost:3002/api/v1/user/doctor/${id}`,
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -73,6 +56,35 @@ const AppContextProvider = (props) => {
     }
   };
 
+  const sendFeedback = async (name, email, comments) => {
+    const payload = {
+      name,
+      email,
+      comments,
+    };
+
+    try {
+      const response = await fetch(
+        "http://localhost:3002/api/v1/user/public/feedback",
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to send feedback");
+      }
+
+      const data = await response.json();
+      console.log("Feedback submitted:", data);
+      alert("Thank you for your feedback!");
+    } catch (error) {
+      console.error("Feedback error:", error);
+      alert("Something went wrong while sending feedback.");
+    }
+  };
+
   // Fetch doctors on component mount
   useEffect(() => {
     fetchDoctors();
@@ -82,7 +94,9 @@ const AppContextProvider = (props) => {
     doctors,
     speciality,
     currencySymbol,
-    fetchDoctorById
+    fetchDoctors,
+    sendFeedback,
+    fetchDoctorById,
   };
 
   return (

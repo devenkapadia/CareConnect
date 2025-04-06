@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { assets } from "../../assets/assets_frontend/assets";
+import { AppContext } from "../../context/AppContext";
 
 const Contact = () => {
+  const { sendFeedback } = useContext(AppContext);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    comments: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.comments) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    await sendFeedback(formData.name, formData.email, formData.comments);
+    setFormData({ name: "", email: "", comments: "" });
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
@@ -24,7 +49,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Contact Info - Styled like Doctor Grid */}
+      {/* Contact Info */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-16">
         <div className="flex flex-col items-center bg-white rounded-lg shadow-md p-6 transition-transform duration-300 hover:scale-105">
           <h3 className="text-xl font-semibold text-blue-600">📞 Phone</h3>
@@ -45,11 +70,14 @@ const Contact = () => {
         <h2 className="text-2xl font-semibold text-gray-900 text-center">
           Send Us a Feedback
         </h2>
-        <form className="mt-6">
+        <form className="mt-6" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Name</label>
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your name"
             />
@@ -58,6 +86,9 @@ const Contact = () => {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your email"
             />
@@ -65,6 +96,9 @@ const Contact = () => {
           <div className="mb-4">
             <label className="block text-gray-700">Message</label>
             <textarea
+              name="comments"
+              value={formData.comments}
+              onChange={handleChange}
               className="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               rows="4"
               placeholder="Enter your message"

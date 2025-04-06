@@ -17,9 +17,10 @@ public class AppointmentService {
     public Map<String,List<AppointmentResponse.AppointmentDetails>> getAllAppointments() {
         Map<String,List<AppointmentResponse.AppointmentDetails>> output = new HashMap<>();
         List<Appointment> appointments = repo.findAll();
+        List<AppointmentResponse.AppointmentDetails> pending = new ArrayList<>();
         if(!appointments.isEmpty()) {
 
-            List<AppointmentResponse.AppointmentDetails> pending = new ArrayList<>();
+
             for (Appointment appointment : appointments) {
                 DoctorResponse.BasicDetails doctor = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
                 PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
@@ -33,12 +34,14 @@ public class AppointmentService {
                 );
                 pending.add(data);
             }
-            output.put("pending_appointments", pending);
-        }
-        List<ArchivedAppointment> archivedAppointments = archivedAppointmentRepo.findAll();
-        if(archivedAppointments.isEmpty()) {
 
-            List<AppointmentResponse.AppointmentDetails> old = new ArrayList<>();
+        }
+        output.put("pending_appointments", pending);
+        List<ArchivedAppointment> archivedAppointments = archivedAppointmentRepo.findAll();
+        List<AppointmentResponse.AppointmentDetails> old = new ArrayList<>();
+        if(!archivedAppointments.isEmpty()) {
+
+
             for (ArchivedAppointment appointment : archivedAppointments) {
                 DoctorResponse.BasicDetails doctor = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
                 PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
@@ -52,8 +55,9 @@ public class AppointmentService {
                 );
                 old.add(data);
             }
-            output.put("completed_appointments", old);
+
         }
+        output.put("completed_appointments", old);
         return output;
     }
 }

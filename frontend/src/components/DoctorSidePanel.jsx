@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { FiCalendar, FiClock, FiLogOut } from "react-icons/fi";
+import { FiCalendar, FiClock, FiUser } from "react-icons/fi";
 
 const DoctorSidePanel = () => {
   const location = useLocation();
@@ -39,6 +39,16 @@ const DoctorSidePanel = () => {
         >
           <FiClock className="mr-3" />
           Unavailability
+        </NavLink>
+
+        <NavLink
+          to="/doctor/profile"
+          className={`flex items-center p-4 hover:bg-gray-700 ${
+            isActive("/profile") ? "bg-gray-700" : ""
+          }`}
+        >
+          <FiUser className="mr-3" />
+          Profile
         </NavLink>
       </nav>
     </div>

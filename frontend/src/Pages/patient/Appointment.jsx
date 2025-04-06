@@ -1,12 +1,20 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
+import { UserContext } from "../../context/UserContext";
 import { assets } from "../../assets/assets_frontend/assets";
+import Cookies from "js-cookie";
 
 const Appointment = () => {
   const { docId } = useParams();
 
   const { fetchDoctorById, currencySymbol, doctors } = useContext(AppContext);
+  const { patients, fetchPatients, createAppointment } =
+    useContext(UserContext);
+
+  const [selectedPatientId, setSelectedPatientId] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const token = Cookies.get("token");
 
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
@@ -16,8 +24,10 @@ const Appointment = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const getDoctor = async () => {
+      if (token) fetchPatients();
       const doc = await fetchDoctorById(docId);
       setDocInfo(doc);
+      console.log(docInfo);
     };
 
     getDoctor();
@@ -55,7 +65,7 @@ const Appointment = () => {
           }
 
           const isAvailable =
-            docInfo?.slotsAvailable[formattedDate]?.includes(`${h}:00`) ||
+            docInfo?.slots_available[formattedDate]?.includes(`${h}:00`) ||
             false;
 
           timeSlots.push({
@@ -77,6 +87,42 @@ const Appointment = () => {
   if (!docInfo) {
     return <p>Loading...</p>;
   }
+
+  const selectedSlotObj =
+    selectedSlot !== null ? docSlots[selectedDay][selectedSlot] : null;
+  const selectedPatient = patients.find(
+    (p) => p.patient_id === selectedPatientId
+  );
+
+  const handleConfirmBooking = async () => {
+    const slot = docSlots[selectedDay][selectedSlot];
+    console.log("Selected Slot:", slot);
+
+    const dateObj = slot.datetime;
+
+    // Format date as YYYY-MM-DD
+    const formattedDate = dateObj.toISOString().split("T")[0];
+
+    // Extract hour (e.g., from "19:00 PM" get "19")
+    const hour = slot.time.split(":")[0];
+
+    const payload = {
+      doctor_id: docId,
+      patient_id: selectedPatientId,
+      date: formattedDate,
+      time: `${hour}:00`,
+    };
+
+    try {
+      const res = await createAppointment(payload);
+      console.log("Booking Success:", res);
+      alert("Appointment booked successfully!");
+      navigate("/my-appointments");
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Something went wrong while booking.");
+    }
+  };
 
   return (
     docInfo && (
@@ -132,46 +178,63 @@ const Appointment = () => {
         </div>
 
         {/* Booking Section */}
-        <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-10">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-            Booking Slots
-          </h1>
-
-          {/* Days Navigation */}
-          <div className="flex justify-center gap-4 overflow-x-auto pb-4">
-            {docSlots &&
-              docSlots.map((daySlots, index) => (
-                <button
-                  key={index}
-                  className={`px-6 py-4 w-36 rounded-lg text-lg font-semibold transition 
+        {token ? (
+          <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-10">
+            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+              Booking Slots
+            </h1>
+            <div className="mb-6">
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Select Patient
+              </label>
+              <select
+                value={selectedPatientId}
+                onChange={(e) => setSelectedPatientId(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
+              >
+                <option value="">-- Select Patient --</option>
+                {patients.map((patient) => (
+                  <option key={patient.patient_id} value={patient.patient_id}>
+                    {patient.first_name} {patient.last_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Days Navigation */}
+            <div className="flex justify-center gap-4 overflow-x-auto pb-4">
+              {docSlots &&
+                docSlots.map((daySlots, index) => (
+                  <button
+                    key={index}
+                    className={`px-6 py-4 w-36 rounded-lg text-lg font-semibold transition 
                 ${
                   selectedDay === index
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                 }`}
-                  onClick={() => {
-                    setSelectedDay(index);
-                    setSelectedSlot(null);
-                  }}
-                >
-                  <p>{daysOfWeek[new Date(daySlots[0].datetime).getDay()]}</p>
-                  <p className="text-xl font-bold">
-                    {new Date(daySlots[0].datetime).getDate()}
-                  </p>
-                </button>
-              ))}
-          </div>
+                    onClick={() => {
+                      setSelectedDay(index);
+                      setSelectedSlot(null);
+                    }}
+                  >
+                    <p>{daysOfWeek[new Date(daySlots[0].datetime).getDay()]}</p>
+                    <p className="text-xl font-bold">
+                      {new Date(daySlots[0].datetime).getDate()}
+                    </p>
+                  </button>
+                ))}
+            </div>
 
-          {/* Time Slots */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {docSlots.length > 0 && docSlots[selectedDay] ? (
-              docSlots[selectedDay].map((slot, slotIndex) => (
-                <div
-                  key={slotIndex}
-                  className="relative group" // Added group for hover effect
-                >
-                  <button
-                    className={`w-full h-20 rounded-lg font-medium text-lg flex items-center justify-center border 
+            {/* Time Slots */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {docSlots.length > 0 && docSlots[selectedDay] ? (
+                docSlots[selectedDay].map((slot, slotIndex) => (
+                  <div
+                    key={slotIndex}
+                    className="relative group" // Added group for hover effect
+                  >
+                    <button
+                      className={`w-full h-20 rounded-lg font-medium text-lg flex items-center justify-center border 
                     transition-all hover:shadow-lg
                     ${
                       slot.available
@@ -180,47 +243,59 @@ const Appointment = () => {
                           : "bg-white text-gray-800 border-gray-300"
                         : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
                     }`}
-                    onClick={() => slot.available && setSelectedSlot(slotIndex)}
-                    disabled={!slot.available}
-                  >
-                    {slot.time}
-                  </button>
+                      onClick={() =>
+                        slot.available && setSelectedSlot(slotIndex)
+                      }
+                      disabled={!slot.available}
+                    >
+                      {slot.time}
+                    </button>
 
-                  {/* Tooltip on hover */}
-                  {!slot.available && (
-                    <div
-                      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-10 
+                    {/* Tooltip on hover */}
+                    {!slot.available && (
+                      <div
+                        className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 z-10 
                         opacity-0 group-hover:opacity-100 transition-opacity duration-300
                         bg-black text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap"
-                    >
-                      Slot not available
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-600 text-md col-span-full">
-                No slots available
-              </p>
-            )}
-          </div>
+                      >
+                        Slot not available
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600 text-md col-span-full">
+                  No slots available
+                </p>
+              )}
+            </div>
 
-          {/* Confirm Button */}
-          <div className="mt-10 text-center">
-            <button
-              className={`px-10 py-4 text-lg font-semibold rounded-lg shadow-md transition
+            {/* Confirm Button */}
+            <div className="mt-10 text-center">
+              <button
+                className={`px-10 py-4 text-lg font-semibold rounded-lg shadow-md transition
             ${
-              selectedSlot !== null
+              selectedSlot !== null && selectedPatientId !== ""
                 ? "bg-green-500 text-white hover:bg-green-600"
                 : "bg-gray-300 text-gray-600 cursor-not-allowed"
             }`}
-              disabled={selectedSlot === null}
+                disabled={selectedSlot === null || selectedPatientId === ""}
+                onClick={() => setShowModal(true)}
+              >
+                Book an Appointment
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-10 text-center">
+            <button
+              className={`px-10 py-4 text-lg font-semibold rounded-lg shadow-md transition bg-green-500 text-white hover:bg-green-600`}
+              onClick={() => navigate("/login")}
             >
-              Book an Appointment
+              Login to Book
             </button>
           </div>
-        </div>
-
+        )}
         {/* Related Doctors Section */}
         {docInfo && doctors && (
           <div className="mt-10">
@@ -270,6 +345,45 @@ const Appointment = () => {
                     </div>
                   </div>
                 ))}
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {showModal && selectedSlotObj && selectedPatient && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white rounded-xl shadow-xl p-8 max-w-lg w-full text-center">
+              <h2 className="text-2xl font-bold mb-4">Confirm Appointment</h2>
+              <p className="text-gray-700 mb-3">
+                Patient:{" "}
+                <span className="font-semibold">
+                  {selectedPatient.first_name} {selectedPatient.last_name}
+                </span>
+              </p>
+              <p className="text-gray-700 mb-3">
+                Date:{" "}
+                <span className="font-semibold">
+                  {selectedSlotObj.formattedDate}
+                </span>
+              </p>
+              <p className="text-gray-700 mb-6">
+                Time:{" "}
+                <span className="font-semibold">{selectedSlotObj.time}</span>
+              </p>
+              <div className="flex justify-center gap-6">
+                <button
+                  className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600"
+                  onClick={handleConfirmBooking}
+                >
+                  Confirm
+                </button>
+                <button
+                  className="px-6 py-2 bg-gray-300 text-gray-800 font-semibold rounded-lg shadow hover:bg-gray-400"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}

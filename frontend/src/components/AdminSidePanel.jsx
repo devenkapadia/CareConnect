@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { FiUser, FiPlusCircle, FiDollarSign } from "react-icons/fi";
+import { FiUser, FiPlusCircle, FiCalendar } from "react-icons/fi";
 
 const AdminSidePanel = () => {
   const location = useLocation();
@@ -46,13 +46,13 @@ const AdminSidePanel = () => {
         </NavLink>
 
         <NavLink
-          to="/admin/transactions"
+          to="/admin/appointmentsList"
           className={`flex items-center p-4 hover:bg-gray-700 ${
-            isActive("/admin/transactions") ? "bg-gray-700" : ""
+            isActive("/admin/appointmentsList") ? "bg-gray-700" : ""
           }`}
         >
-          <FiDollarSign className="mr-3" />
-          Transactions
+          <FiCalendar className="mr-3" />
+          Appointments
         </NavLink>
       </nav>
     </div>

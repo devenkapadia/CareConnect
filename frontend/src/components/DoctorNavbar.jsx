@@ -1,14 +1,11 @@
 import React from "react";
 import { assets } from "../assets/assets_frontend/assets";
-import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useAuth } from "./../context/AuthContext";
 
 const DoctorNavbar = () => {
-  const navigate = useNavigate();
-
-  const logout = () => {
-    Cookies.remove("token");
-    navigate("/");
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -23,7 +20,7 @@ const DoctorNavbar = () => {
       {/* Navigation */}
       <div className="flex items-center gap-6">
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="bg-blue-600 text-white px-6 py-2 rounded-full font-medium transition hover:bg-blue-700"
         >
           Logout

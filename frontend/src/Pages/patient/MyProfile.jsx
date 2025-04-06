@@ -1,194 +1,158 @@
-import React, { useState, useEffect } from "react";
-import { assets } from "../../assets/assets_frontend/assets";
+import React, { useState, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import { UserContext } from "../../context/UserContext";
 
 const MyProfile = () => {
   const token = Cookies.get("token");
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    gender: "",
-    profileImage: "",
+
+  const [userData, setUserData] = useState({ name: "", email: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPatient, setNewPatient] = useState({
+    first_name: "",
+    last_name: "",
+    date_of_birth: "",
+    gender: "FEMALE",
   });
 
-  // Decode JWT Token and Populate User Data
+  const { fetchPatients, addPatient, patients } = useContext(UserContext);
+
   useEffect(() => {
     if (token) {
       const decoded = jwtDecode(token);
-      console.log(decoded);
       setUserData({
         name: decoded.name || "N/A",
         email: decoded.email || "N/A",
-        phone: decoded.phone || "N/A",
-        address: decoded.address || "N/A",
-        gender: decoded.gender || "N/A",
-        profileImage: decoded.profileImage || assets.profile_pic, // Handle profile image
       });
-    } else {
-      console.log("token");
     }
+
+    fetchPatients(); // fetch patients from backend
   }, [token]);
 
-  // Handle Input Change
-  const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+  const handlePatientChange = (e) => {
+    setNewPatient({ ...newPatient, [e.target.name]: e.target.value });
   };
 
-  // Toggle Edit Mode
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-  };
-
-  // Handle Save Changes
-  const handleSave = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/api/v1/user/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include token in the header
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
-      }
-
-      const updatedData = await response.json();
-      console.log("Profile updated:", updatedData);
-
-      // Exit edit mode
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-    }
+  const handleAddPatient = async () => {
+    await addPatient(newPatient);
+    await fetchPatients(); // fetch updated list
+    setNewPatient({
+      first_name: "",
+      last_name: "",
+      date_of_birth: "",
+      gender: "FEMALE",
+    });
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-10">
-      {/* Profile Image and Details */}
-      <div className="w-full max-w-6xl flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Profile Image Section */}
-        <div className="md:w-1/3 bg-blue-500 flex justify-center items-center p-10">
-          <img
-            src={userData.profileImage}
-            alt="Profile"
-            className="w-64 h-64 rounded-full border-4 border-white shadow-lg"
-          />
-        </div>
-
-        {/* Profile Info Section */}
-        <div className="md:w-2/3 p-10">
-          <h1 className="text-4xl font-bold mb-6 text-gray-800">My Profile</h1>
-
-          <div className="space-y-6">
-            <div className="flex flex-col">
-              <label className="text-lg font-semibold">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={userData.name}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full p-4 border rounded-lg ${
-                  isEditing ? "bg-white" : "bg-gray-100"
-                }`}
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-lg font-semibold">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={userData.email}
-                disabled
-                className="w-full p-4 border rounded-lg bg-gray-100"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col">
-                <label className="text-lg font-semibold">Phone</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={userData.phone}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className={`w-full p-4 border rounded-lg ${
-                    isEditing ? "bg-white" : "bg-gray-100"
-                  }`}
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label className="text-lg font-semibold">Gender</label>
-                <select
-                  name="gender"
-                  value={userData.gender}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className={`w-full p-4 border rounded-lg ${
-                    isEditing ? "bg-white" : "bg-gray-100"
-                  }`}
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-lg font-semibold">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={userData.address}
-                onChange={handleChange}
-                disabled={!isEditing}
-                className={`w-full p-4 border rounded-lg ${
-                  isEditing ? "bg-white" : "bg-gray-100"
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex justify-end mt-8">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  className="px-8 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 mr-4"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={toggleEdit}
-                  className="px-8 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={toggleEdit}
-                className="px-8 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Edit Profile
-              </button>
-            )}
-          </div>
-        </div>
+    <div className="min-h-screen p-10">
+      {/* User Info Section */}
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold mb-4">My Profile</h1>
+        <p className="text-lg">
+          <strong>Name:</strong> {userData.name}
+        </p>
+        <p className="text-lg">
+          <strong>Email:</strong> {userData.email}
+        </p>
       </div>
+
+      {/* Add Patient Button */}
+      <div className="mb-6">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+        >
+          Add Patient
+        </button>
+      </div>
+
+      {/* Patients Table */}
+      {patients.length > 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white border border-gray-300 text-left">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="py-2 px-4 border">First Name</th>
+                <th className="py-2 px-4 border">Last Name</th>
+                <th className="py-2 px-4 border">DOB</th>
+                <th className="py-2 px-4 border">Gender</th>
+              </tr>
+            </thead>
+            <tbody>
+              {patients.map((patient, index) => (
+                <tr key={index} className="border-t">
+                  <td className="py-2 px-4 border">{patient.first_name}</td>
+                  <td className="py-2 px-4 border">{patient.last_name}</td>
+                  <td className="py-2 px-4 border">{patient.date_of_birth}</td>
+                  <td className="py-2 px-4 border">{patient.gender}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md space-y-4 shadow-lg">
+            <h2 className="text-xl font-semibold">Add Patient</h2>
+
+            <input
+              type="text"
+              name="first_name"
+              placeholder="First Name"
+              value={newPatient.first_name}
+              onChange={handlePatientChange}
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last Name"
+              value={newPatient.last_name}
+              onChange={handlePatientChange}
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="date"
+              name="date_of_birth"
+              value={newPatient.date_of_birth}
+              onChange={handlePatientChange}
+              className="w-full p-2 border rounded"
+            />
+            <select
+              name="gender"
+              value={newPatient.gender}
+              onChange={handlePatientChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="FEMALE">Female</option>
+              <option value="MALE">Male</option>
+              <option value="OTHER">Other</option>
+            </select>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 bg-gray-400 text-white rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddPatient}
+                className="px-4 py-2 bg-green-600 text-white rounded"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
 export default MyProfile;
