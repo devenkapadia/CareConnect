@@ -26,8 +26,8 @@ public class DoctorController {
         return ResponseEntity.ok(doctors);
     }
     @GetMapping("/{reqid}")
-    public ResponseEntity<DoctorResponse.CompleteDetails> getDoctorById(@AuthenticationPrincipal String id, @PathVariable String reqid) {
-        DoctorResponse.CompleteDetails doctor = doctorService.getDoctorById(id,reqid);
+    public ResponseEntity<DoctorResponse.CompleteDetails> getDoctorById(@PathVariable String reqid) {
+        DoctorResponse.CompleteDetails doctor = doctorService.getDoctorById(reqid);
         return ResponseEntity.ok(doctor);
     }
 }

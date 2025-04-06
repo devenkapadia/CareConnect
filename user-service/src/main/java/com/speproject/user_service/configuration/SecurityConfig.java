@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/user/public/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/user/doctor").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/user/doctor/**").permitAll()
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
