@@ -18,8 +18,8 @@ import java.util.UUID;
 public class ArchivedAppointment {
 
     public enum AppointmentStatus {
+        REQUESTED,
         PENDING,
-        CONFIRMED,
         CANCELLED,
         COMPLETED
     }

@@ -16,7 +16,6 @@ if not os.path.exists(BACKUP_DIRECTORY):
     os.makedirs(BACKUP_DIRECTORY)
 
 def create_backup():
-    """Creates a PostgreSQL database backup from a remote host using pg_dump."""
     now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     dump_filename = os.path.join(BACKUP_DIRECTORY, BACKUP_FILENAME.format(now))
 

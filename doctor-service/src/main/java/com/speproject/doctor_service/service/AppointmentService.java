@@ -74,8 +74,8 @@ public class AppointmentService {
             throw new CustomException.NotFound("Appointment not found");
         }
         Appointment appointment1 = appointment.get();
-        if(appointment1.getStatus() != Appointment.AppointmentStatus.PENDING) {
-            throw new CustomException.BadRequest("Appointment status is not PENDING");
+        if(appointment1.getStatus() != Appointment.AppointmentStatus.REQUESTED) {
+            throw new CustomException.BadRequest("Appointment status is not REQUESTED");
         }
         String dateStr = appointment1.getDate();
         String timeStr = appointment1.getTime();

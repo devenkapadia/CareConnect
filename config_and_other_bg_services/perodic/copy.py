@@ -57,7 +57,7 @@ def archive_future_appointments():
         cur.execute("""
             UPDATE archived_appointments
             SET status = 'CANCELLED'
-            WHERE status = 'PENDING' 
+            WHERE status = 'REQUESTED' 
         """)
         updated_count = cur.rowcount
         print(f"Updated {updated_count} records to CANCELLED in archived_appointments")
@@ -66,7 +66,7 @@ def archive_future_appointments():
         cur.execute("""
             UPDATE archived_appointments
             SET status = 'COMPLETED'
-            WHERE status = 'CONFIRMED' 
+            WHERE status = 'PENDING' 
         """)
         updated_count = cur.rowcount
         print(f"Updated {updated_count} records to COMPLETED in archived_appointments")

@@ -43,11 +43,10 @@
     - UPDATE **PENDING**
     
 # Microservices
-- Email notification (rabbitmq)
-- Cron job to shift old data
-- Daily backup -> local files cxc
-- Loki + Grafana **DONE** 
-- reminder to patient (1hr) and doctors (10min)
+- Email notification (rabbitmq) **Testing+ELK integration**
+- Cron job to shift old data + reminder **ADD email logic + perodic**
+- Daily backup -> local files cxc **PENDING**
+- ELK **DONE** 
 
 
 20:00

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:16.8
     container_name: postgres_db
     restart: always
     environment:
@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/create_database.sql
 
 volumes:
   postgres_data:

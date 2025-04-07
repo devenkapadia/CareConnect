@@ -26,7 +26,7 @@ public class AppointmentController {
 
     @PatchMapping("/{appid}")
     public ResponseEntity<Map<String,List<AppointmentResponse.AppointmentDetails>>> approveAppointment(@AuthenticationPrincipal String id,@PathVariable String appid){
-        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.updateAppointment(id,appid,Appointment.AppointmentStatus.CONFIRMED);
+        Map<String,List<AppointmentResponse.AppointmentDetails>> appointments = appointmentService.updateAppointment(id,appid,Appointment.AppointmentStatus.PENDING);
         return ResponseEntity.ok(appointments);
     }
 

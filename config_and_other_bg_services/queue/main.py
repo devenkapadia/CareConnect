@@ -10,11 +10,11 @@ import os
 #load_dotenv()
 
 # SMTP configuration
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
-SMTP_USERNAME = 'shubhp2610@gmail.com'
-SMTP_PASSWORD = 'wrsd mccy ogjn sppd'
-SENDER_EMAIL = 'shubhp2610@gmail.com'
+SMTP_SERVER = 'inleed.xyz'
+SMTP_PORT = 465
+SMTP_USERNAME = 'no-reply@261403.xyz'
+SMTP_PASSWORD = 'QWERTqwert@12345'
+SENDER_EMAIL = 'no-reply@261403.xyz'
 
 def send_email(recipient, subject, message):
     """Send an email using SMTP."""

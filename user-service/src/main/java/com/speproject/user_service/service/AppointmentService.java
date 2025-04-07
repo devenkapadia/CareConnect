@@ -35,8 +35,8 @@ public class AppointmentService {
         Optional<List<Appointment>> currentApp = repo.findByDoctor_IdAndDateAndTime(appointment.getDoctor().getId(), appointment.getDate(), appointment.getTime());
         if(currentApp.isPresent()) {
             for(Appointment app : currentApp.get()) {
-                if(app.getStatus()== Appointment.AppointmentStatus.CONFIRMED){
-                    throw new CustomException.BadRequest("Appointment is already confirmed");
+                if(app.getStatus()== Appointment.AppointmentStatus.PENDING){
+                    throw new CustomException.BadRequest("Appointment slot is already booked");
                 }
             }
         }

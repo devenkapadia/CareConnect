@@ -21,7 +21,7 @@ public class AppointmentMapper {
                 .patient(patient)
                 .user(user)
                 .doctor(doctor)
-                .status(Appointment.AppointmentStatus.PENDING)
+                .status(Appointment.AppointmentStatus.REQUESTED)
                 .notes(request.notes())
                 .build();
     }
