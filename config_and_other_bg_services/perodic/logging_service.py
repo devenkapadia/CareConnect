@@ -29,9 +29,5 @@ logstash_handler.setFormatter(logstash_formatter)
 # Add handler to logger
 logger.addHandler(logstash_handler)
 
-# Test it
-logger.info('YESSSSSSSSSSSSSSSSSSSS!')
+#logger.info('YESSSSSSSSSSSSSSSSSSSS!')
 
-# Keep the script alive briefly for testing
-import time
-time.sleep(1)

@@ -27,10 +27,9 @@ def send_email(recipient, subject, message):
 
         # Add message body
         msg.attach(MIMEText(message, 'plain'))
-
+        print(f"Sending to {recipient}")
         # Connect to SMTP server
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()  # Secure the connection
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
             server.send_message(msg)
             
@@ -60,9 +59,10 @@ def callback(ch, method, properties, body):
         
 
 def main():
-    rabbitmq = RabbitMQ()
+    #rabbitmq = RabbitMQ()
     print("Starting to consume messages from EmailQueue...")
-    rabbitmq.consume("EmailQueue", callback)
+    send_email("shubhp2610@gmail.com", "Test Subject", "Test Message")
+    #rabbitmq.consume("EmailQueue", callback)
 
 if __name__ == "__main__":
     main()

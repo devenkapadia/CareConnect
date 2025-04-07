@@ -1,7 +1,7 @@
 import psycopg2
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
-
+from logging_service import logger
 # PostgreSQL Connection Config
 DB_CONFIG = {
     "dbname": "careconnect",
@@ -82,20 +82,23 @@ def archive_future_appointments():
         # Commit the transaction
         conn.commit()
         print(f"[{datetime.now()}] Transaction committed successfully")
+        logger.info(f"Archived successfully. Transfered {inserted_count} records to archived_appointments and deleted {deleted_count} records from appointments. Updated {updated_count} records to CANCELLED and COMPLETED in archived_appointments.")
 
     except Exception as e:
         print(f"Error archiving appointments: {e}")
         if conn:
             conn.rollback()
             print("Transaction rolled back")
+        logger.error(f"Error archiving appointments: {e}")
     finally:
         if cur:
             cur.close()
         if conn:
             conn.close()
             print("Database connection closed")
+            logger.info("Database connection closed")
 
-archive_future_appointments()
+#archive_future_appointments()
 # # Scheduler to run every hour on the hour
 # scheduler = BlockingScheduler()
 # scheduler.add_job(archive_future_appointments, 'cron', minute=0)
