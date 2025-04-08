@@ -15,7 +15,7 @@ const DoctorProfile = () => {
 
   useEffect(() => {
     fetchDoctorDetails();
-  }, []);
+  }, [fetchDoctorDetails]);
 
   if (!doctorDetails) {
     return <div className="p-6 text-gray-600">Loading doctor profile...</div>;

@@ -6,28 +6,27 @@ const Footer = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="text-white py-10 px-6 md:px-12 lg:px-20">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
-        {/* Left Section */}
-        <div className="flex flex-col col-span-2 items-center md:items-start">
+    <footer className="px-6 md:px-12 lg:px-20 py-12">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
+        {/* Logo & Description */}
+        <div className="md:col-span-2 flex flex-col gap-4">
           <img
             src={assets.logo}
             alt="CareConnect Logo"
-            className="w-32 mb-4 cursor-pointer"
+            className="w-36 cursor-pointer"
             onClick={() => navigate("/")}
           />
-          <p className="text-sm text-gray-400 max-w-xs">
-            Booking a doctor’s appointment is quick and easy. Simply choose your
-            doctor, preferred time, and location to secure your spot. We make
-            healthcare simple and convenient, ensuring you get the care you need
-            when you need it.
+          <p className="text-gray-400 leading-relaxed max-w-md">
+            Booking a doctor’s appointment is now simple and fast. Choose your
+            doctor, time, and location with ease. We’re here to make healthcare
+            accessible and hassle-free.
           </p>
         </div>
 
-        {/* Center Section */}
-        <div className="text-black flex flex-col items-center md:items-start">
-          <p className="text-lg font-semibold mb-3">Company</p>
-          <ul className="text-gray-400 space-y-2">
+        {/* Company Links */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Company</h3>
+          <ul className="space-y-2 text-gray-400">
             <li
               className="hover:text-black cursor-pointer"
               onClick={() => navigate("/about")}
@@ -49,13 +48,13 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Right Section */}
-        <div className="text-black flex flex-col items-center md:items-start">
-          <p className="text-lg font-semibold mb-3">Get In Touch</p>
-          <ul className="text-gray-400 space-y-2">
+        {/* Contact Info */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Get In Touch</h3>
+          <ul className="space-y-2 text-gray-400">
             <li
               className="hover:text-black cursor-pointer"
-              onClick={() => (window.location.href = "tel:+123112411124")}
+              onClick={() => (window.location.href = "tel:+919020121412")}
             >
               +91 90201 21412
             </li>
@@ -71,11 +70,11 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Section */}
-      <div className="mt-8 border-t border-gray-700 pt-4 text-center text-sm text-gray-500">
-        <p>© 2025 CareConnect. All rights reserved.</p>
+      {/* Bottom Footer */}
+      <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500 text-xs">
+        © 2025 <span className="font-medium text-white">CareConnect</span>. All rights reserved.
       </div>
-    </div>
+    </footer>
   );
 };
 

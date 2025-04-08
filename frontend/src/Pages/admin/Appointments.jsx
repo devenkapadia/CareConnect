@@ -7,13 +7,10 @@ const Appointments = () => {
   const [appointmentList, setAppointmentList] = useState([]);
 
   useEffect(() => {
-    // Fetching the appointments when the component mounts
     fetchAppointments();
-    console.log(appointmentList);
   }, []);
 
   useEffect(() => {
-    // Set the appointment list once the appointments are fetched from context
     if (appointments) {
       const mergedAppointments = [
         ...(appointments.pending_appointments || []),
@@ -23,6 +20,27 @@ const Appointments = () => {
     }
   }, [appointments]);
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case "REQUESTED":
+        return <span className="text-yellow-500">Requested</span>;
+      case "PENDING":
+        return <span className="text-blue-500">Pending</span>;
+      case "COMPLETED":
+        return <span className="text-green-500">Completed</span>;
+      case "CANCELLED":
+        return <span className="text-red-500">Cancelled</span>;
+      default:
+        return <span className="text-gray-500">Unknown</span>;
+    }
+  };
+
+  const getDoctorApprovalStatus = (status) => {
+    if (status === "REQUESTED") return <span className="text-yellow-500">Waiting for Approval</span>;
+    if (status === "CANCELLED") return <span className="text-red-500">Rejected</span>;
+    return <span className="text-green-500">Approved</span>; // For PENDING or COMPLETED
+  };
+
   return (
     <div className="bg-white p-8 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6 flex items-center">
@@ -30,7 +48,6 @@ const Appointments = () => {
         Appointments
       </h1>
 
-      {/* Table to display appointments */}
       <table className="min-w-full border-collapse">
         <thead>
           <tr>
@@ -48,25 +65,12 @@ const Appointments = () => {
               <tr key={appointment.appointmentId} className="border-b">
                 <td className="px-4 py-2">{appointment.doctor.name}</td>
                 <td className="px-4 py-2">
-                  {appointment.patient.first_name}{" "}
-                  {appointment.patient.last_name}
+                  {appointment.patient.first_name} {appointment.patient.last_name}
                 </td>
                 <td className="px-4 py-2">{appointment.date}</td>
                 <td className="px-4 py-2">{appointment.time}</td>
-                <td className="px-4 py-2">
-                  {appointment.status === "PENDING" ? (
-                    <span className="text-yellow-500">Pending</span>
-                  ) : (
-                    <span className="text-green-500">Completed</span>
-                  )}
-                </td>
-                <td className="px-4 py-2">
-                  {appointment.status === "PENDING" ? (
-                    <span className="text-red-500">Not Approved</span>
-                  ) : (
-                    <span className="text-green-500">Approved</span>
-                  )}
-                </td>
+                <td className="px-4 py-2">{getStatusLabel(appointment.status)}</td>
+                <td className="px-4 py-2">{getDoctorApprovalStatus(appointment.status)}</td>
               </tr>
             ))
           ) : (

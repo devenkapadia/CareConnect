@@ -31,6 +31,8 @@ export const DoctorProvider = ({ children }) => {
         },
       });
       const data = await res.json();
+      console.log(data);
+      
       setDoctorDetails(data);
     } catch (err) {
       console.error("Error fetching doctor details", err);

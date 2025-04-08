@@ -22,7 +22,7 @@ const Navbar = () => {
         className="w-44 cursor-pointer"
         src={assets.logo}
       />
-      <ul className="hidden md:flex items-start gap-5">
+      <ul className="hidden md:flex items-start gap-5 text-base">
         <NavLink to="/">
           <li className="py-1">Home</li>
           <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />

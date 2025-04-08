@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     Cookies.set("token", token);
     const decoded = jwtDecode(token);
     setUser(decoded);
-    console.log(decoded)
+    console.log(decoded);
     if (decoded.role === "ADMIN") {
       navigate("/admin");
       console.log("admin");
@@ -35,7 +35,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     Cookies.remove("token");
     setUser(null);
-    navigate("/");
+    console.log('here');
+    navigate("/", { replace: true });
+    window.location.reload();
   };
 
   return (
