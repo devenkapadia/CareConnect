@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   auth-service:
-    image: auth-service:latest
+    image: shubhpatel2610/auth-service:latest
     ports:
       - "3001:3001"
     environment:
@@ -13,7 +13,7 @@ services:
       DB_PASSWORD: QWERTqwert@12345
 
   user-service:
-    image: user-service:latest
+    image: shubhpatel2610/user-service:latest
     ports:
       - "3002:3002"
     environment:
@@ -25,7 +25,7 @@ services:
       DB_PASSWORD: QWERTqwert@12345
   
   doctor-service:
-    image: doctor-service:latest
+    image: shubhpatel2610/doctor-service:latest
     ports:
       - "3003:3003"
     environment:
@@ -36,7 +36,7 @@ services:
       DB_USERNAME: careconnect
       DB_PASSWORD: QWERTqwert@12345
   admin-service:
-    image: admin-service:latest
+    image: shubhpatel2610/admin-service:latest
     ports:
       - "3004:3004"
     environment:
