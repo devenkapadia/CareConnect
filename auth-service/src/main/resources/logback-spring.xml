@@ -8,7 +8,7 @@
     </appender>
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-            <destination>172.17.0.1:5044</destination>
+            <destination>logstash:5044</destination>
            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                <customFields>{"service_name":"auth-service"}</customFields>
            </encoder>
