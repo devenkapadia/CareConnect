@@ -14,7 +14,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    git branch: 'master', url: "${GITHUB_REPO_URL}", credentialsId: "${GITHUB_CRED_ID}"
+                    git branch: 'main', url: "${GITHUB_REPO_URL}", credentialsId: "${GITHUB_CRED_ID}"
                 }
             }
         }
