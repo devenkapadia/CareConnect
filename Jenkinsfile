@@ -54,6 +54,15 @@ pipeline {
                 }
             }
         }
+        stage('Build frontend-service docker image') {
+            steps {
+                script {
+                    dir('frontend') {
+                        sh 'docker build -t shubhpatel2610/frontend-service .'
+                    }
+                }
+            }
+        }
         stage('Build auth-service docker image') {
             steps {
                 script {
@@ -94,6 +103,7 @@ pipeline {
             steps {
                 script{
                     docker.withRegistry('', "${DOCKERHUB_CRED_ID}") {
+                    sh "docker push shubhpatel2610/frontend-service"
                     sh "docker push shubhpatel2610/auth-service"
                     sh "docker push shubhpatel2610/admin-service"
                     sh "docker push shubhpatel2610/user-service"

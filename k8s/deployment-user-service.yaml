@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: shubhpatel2610/user-service:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: jwt-secret
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: db-host
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: db-port
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: db-name
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: db-username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: db-password

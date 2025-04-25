@@ -17,7 +17,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const host = "http://localhost:3001";
+    const host = "http://careconnect.local";
     
     const endpoint = isSignup
       ? `${host}/api/v1/auth/registerPatient`

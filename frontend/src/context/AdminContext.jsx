@@ -9,7 +9,7 @@ export const AdminProvider = ({ children }) => {
   const [doctors, setDoctors] = useState([]);
   const [error, setError] = useState(null);
 
-  const API_BASE = "http://localhost:3004/api/v1/admin";
+  const API_BASE = "http://careconnect.local/api/v1/admin";
 
   const getToken = () => Cookies.get("token");
 

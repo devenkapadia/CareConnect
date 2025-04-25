@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front-service
+  template:
+    metadata:
+      labels:
+        app: front-service
+    spec:
+      containers:
+      - name: front-service
+        image: shubhpatel2610/front-service:latest
+        ports:
+        - containerPort: 80

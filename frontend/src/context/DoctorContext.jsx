@@ -11,7 +11,7 @@ export const DoctorProvider = ({ children }) => {
 
   const fetchAppointments = async () => {
     try {
-      const res = await fetch("http://localhost:3003/api/v1/doctor/appointment", {
+      const res = await fetch("http://careconnect.local/api/v1/doctor/appointment", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -25,7 +25,7 @@ export const DoctorProvider = ({ children }) => {
 
   const fetchDoctorDetails = async () => {
     try {
-      const res = await fetch("http://localhost:3003/api/v1/doctor", {
+      const res = await fetch("http://careconnect.local/api/v1/doctor", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -42,7 +42,7 @@ export const DoctorProvider = ({ children }) => {
   const approveAppointment = async (appointmentId) => {
     try {
       const res = await fetch(
-        `http://localhost:3003/api/v1/doctor/appointment/${appointmentId}`,
+        `http://careconnect.local/api/v1/doctor/appointment/${appointmentId}`,
         {
           method: "PATCH",
           headers: {
@@ -61,7 +61,7 @@ export const DoctorProvider = ({ children }) => {
   const rejectAppointment = async (appointmentId) => {
     try {
       const res = await fetch(
-        `http://localhost:3003/api/v1/doctor/appointment/reject/${appointmentId}`,
+        `http://careconnect.local/api/v1/doctor/appointment/reject/${appointmentId}`,
         {
           method: "PATCH",
           headers: {

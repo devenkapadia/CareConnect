@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3002/api/v1/user/appointment", {
+      const response = await fetch("http://careconnect.local/api/v1/user/appointment", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
   // Create a new appointment
   const createAppointment = async (appointmentData) => {
     try {
-      const response = await fetch("http://localhost:3002/api/v1/user/appointment", {
+      const response = await fetch("http://careconnect.local/api/v1/user/appointment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export const UserProvider = ({ children }) => {
   const fetchPatients = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3002/api/v1/user/patient", {
+      const response = await fetch("http://careconnect.local/api/v1/user/patient", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }) => {
   // Add a new patient
   const addPatient = async (patientData) => {
     try {
-      const response = await fetch("http://localhost:3002/api/v1/user/patient", {
+      const response = await fetch("http://careconnect.local/api/v1/user/patient", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

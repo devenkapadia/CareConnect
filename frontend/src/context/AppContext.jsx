@@ -12,7 +12,7 @@ const AppContextProvider = (props) => {
   // Function to fetch doctors from API
   const fetchDoctors = async () => {
     try {
-      const response = await fetch("http://localhost:3002/api/v1/user/doctor", {
+      const response = await fetch("http://careconnect.local/api/v1/user/doctor", {
         method: "GET",
       });
 
@@ -34,7 +34,7 @@ const AppContextProvider = (props) => {
   const fetchDoctorById = async (id) => {
     try {
       const response = await fetch(
-        `http://localhost:3002/api/v1/user/doctor/${id}`,
+        `http://careconnect.local/api/v1/user/doctor/${id}`,
         {
           method: "GET",
           headers: {
@@ -65,7 +65,7 @@ const AppContextProvider = (props) => {
 
     try {
       const response = await fetch(
-        "http://localhost:3002/api/v1/user/public/feedback",
+        "http://careconnect.local/api/v1/user/public/feedback",
         {
           method: "POST",
           body: JSON.stringify(payload),

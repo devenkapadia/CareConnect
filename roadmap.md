@@ -47,6 +47,10 @@
 - Cron job to shift old data + reminder **ADD email logic + perodic**
 - Daily backup -> local files cxc **PENDING**
 - ELK **DONE** 
+--------------------------
+# Deployment
+- Adding logging in the services whereever needed.
+
 
 
 20:00
