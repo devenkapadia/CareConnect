@@ -1,14 +1,17 @@
 import psycopg2
-from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 from logging_service import logger
+from config import *
+from rabbitmq import RabbitMQ
+
 # PostgreSQL Connection Config
 DB_CONFIG = {
-    "dbname": "careconnect",
-    "user": "careconnect",
-    "password": "QWERTqwert@12345",
-    "host": "db.careconnect.261403.xyz",
-    "port": "5432"
+    "dbname": DATABASE_NAME,
+    "user": DATABASE_USER,
+    "password": DATABASE_PASSWORD,
+    "host": REMOTE_HOST,
+    "port": REMOTE_PORT
 }
 
 def archive_future_appointments():
@@ -18,22 +21,54 @@ def archive_future_appointments():
         # Connect to the database
         conn = psycopg2.connect(**DB_CONFIG)
         cur = conn.cursor()
-
+        rabbitmq = RabbitMQ()
         # Verify connection
         cur.execute("SELECT current_database(), CURRENT_TIMESTAMP")
         db_name, db_time = cur.fetchone()
         print(f"Connected to database: {db_name} | Server time: {db_time}")
 
-        now = datetime.now()
-        print(f"Local time: {now}")
+        # Get current time in IST
+        ist_timezone = pytz.timezone('Asia/Kolkata')
+        now = datetime.now(ist_timezone)
+        print(f"IST time: {now}")
         print(f"[{now}] Archiving future appointments...")
+        
+        one_hour_later = now + timedelta(hours=1)
 
+        # Format time for query
+        one_hour_later_d = one_hour_later.strftime('%d-%m-%Y')
+        one_hour_later_h = one_hour_later.strftime('%H:00')
+
+        # Check if the appointment is in the future
+        cur.execute("""
+            SELECT a.appointment_id, u.email, a.date, a.time, d.name, a.status
+            FROM appointments a
+            JOIN app_users u ON a.user_id = u.user_id
+            JOIN app_users d ON a.doctor_id = d.user_id
+            WHERE a.status IN ('CONFIRMED')
+            AND a.date = %s
+            AND a.time = %s
+        """, (one_hour_later_d, one_hour_later_h))
+        future_appointments = cur.fetchall()
+        print(f"Found {len(future_appointments)} future appointments")
+        for appointment in future_appointments:
+            data = {
+                "email": appointment[1],
+                "subject": "Appointment Reminder",
+                "message": f"Dear {appointment[1]},\n\nThis is a reminder for your appointment with Dr. {appointment[4]} on {appointment[2]} at {appointment[3]}.\n\nBest regards,\nCareConnect Team"
+            }
+            rabbitmq.publish("EmailQueue", str(data))
+        print(f"Published {len(future_appointments)} messages to EmailQueue")
+        
+        # Use naive datetime for database comparison (without timezone info)
+        naive_now = now.replace(tzinfo=None)
+        
         # Step 1: Count records that should be archived
         cur.execute("""
             SELECT COUNT(*) 
             FROM appointments 
             WHERE TO_TIMESTAMP(date || ' ' || time, 'DD-MM-YYYY HH24:MI') < %s
-        """, (now,))
+        """, (naive_now,))
         eligible_count = cur.fetchone()[0]
         print(f"Found {eligible_count} eligible future appointments")
 
@@ -49,7 +84,7 @@ def archive_future_appointments():
             FROM appointments
             WHERE TO_TIMESTAMP(date || ' ' || time, 'DD-MM-YYYY HH24:MI') < %s
             RETURNING appointment_id
-        """, (now,))
+        """, (naive_now,))
         inserted_count = cur.rowcount
         print(f"Inserted {inserted_count} records into archived_appointments")
 
@@ -75,13 +110,13 @@ def archive_future_appointments():
         cur.execute("""
             DELETE FROM appointments
             WHERE TO_TIMESTAMP(date || ' ' || time, 'DD-MM-YYYY HH24:MI') < %s
-        """, (now,))
+        """, (naive_now,))
         deleted_count = cur.rowcount
         print(f"Deleted {deleted_count} records from appointments")
 
         # Commit the transaction
         conn.commit()
-        print(f"[{datetime.now()}] Transaction committed successfully")
+        print(f"[{datetime.now(ist_timezone)}] Transaction committed successfully")
         logger.info(f"Archived successfully. Transfered {inserted_count} records to archived_appointments and deleted {deleted_count} records from appointments. Updated {updated_count} records to CANCELLED and COMPLETED in archived_appointments.")
 
     except Exception as e:
@@ -97,14 +132,3 @@ def archive_future_appointments():
             conn.close()
             print("Database connection closed")
             logger.info("Database connection closed")
-
-#archive_future_appointments()
-# # Scheduler to run every hour on the hour
-# scheduler = BlockingScheduler()
-# scheduler.add_job(archive_future_appointments, 'cron', minute=0)
-# print("Appointment Archiver is running...")
-
-# try:
-#     scheduler.start()
-# except (KeyboardInterrupt, SystemExit):
-#     print("Scheduler stopped.")

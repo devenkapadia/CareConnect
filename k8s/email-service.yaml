@@ -1,53 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: email-service
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: auth-service
+      app: email-service
   template:
     metadata:
       labels:
-        app: auth-service
+        app: email-service
     spec:
+      restartPolicy: Always
       containers:
-      - name: auth-service
-        image: shubhpatel2610/auth-service:latest
-        ports:
-        - containerPort: 3001
+      - name: email-service
+        image: shubhpatel2610/email-service:latest
         env:
-        - name: JWT_SECRET
+        - name: SMTP_SERVER
           valueFrom:
             secretKeyRef:
               name: careconnect-db-credentials
-              key: jwt-secret
-        - name: DB_HOST
+              key: smtp-server
+        - name: SMTP_PORT
           valueFrom:
             secretKeyRef:
               name: careconnect-db-credentials
-              key: db-host
-        - name: DB_PORT
+              key: smtp-port
+        - name: SMTP_USERNAME
           valueFrom:
             secretKeyRef:
               name: careconnect-db-credentials
-              key: db-port
-        - name: DB_NAME
+              key: smtp-username
+        - name: SMTP_PASSWORD
           valueFrom:
             secretKeyRef:
               name: careconnect-db-credentials
-              key: db-name
-        - name: DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-password
+              key: smtp-password
         - name: RABBITMQ_HOST
           valueFrom:
             secretKeyRef:
@@ -63,8 +52,19 @@ spec:
             secretKeyRef:
               name: careconnect-db-credentials
               key: rabbitmq-username
-        - name: RABBITMQ_PASSWORD 
+        - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: careconnect-db-credentials
               key: rabbitmq-password
+        - name: LOGSTASH_HOST
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: logstash-host
+        - name: LOGSTASH_PORT
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: logstash-port
+

@@ -2,13 +2,10 @@ import os
 import subprocess
 import datetime
 from logging_service import logger
+from config import *
+#from logging_service import logger
 # Database credentials and settings
-DATABASE_NAME = "careconnect"
-DATABASE_USER = "careconnect"
-DATABASE_PASSWORD = "QWERTqwert@12345"
-REMOTE_HOST = "db.careconnect.261403.xyz"  # e.g., "192.168.1.100" or "db.example.com"
-REMOTE_PORT = "5432"  # Default PostgreSQL port
-BACKUP_DIRECTORY = "/backups"
+BACKUP_DIRECTORY = "/app/backups"
 BACKUP_FILENAME = "postgres_backup_{}.sql.gz"
 
 # Create the backup directory if it doesn't exist
@@ -39,6 +36,11 @@ def create_backup():
         # Execute the pg_dump command
         result = subprocess.run(command, capture_output=True, text=True, check=True, env=env)
         print(f"Backup created successfully: {dump_filename}")
+        # List files in the backup directory
+        backup_files = os.listdir(BACKUP_DIRECTORY)
+        print("Files in backup directory:")
+        for file in backup_files:
+            print(file)
         logger.info(f"Backup created successfully: {dump_filename}")
         logger.info(f"Command output: {result.stdout}")
         
@@ -50,6 +52,3 @@ def create_backup():
         logger.error(f"Command output: {e.stdout}")
         logger.error(f"Command error output: {e.stderr}")
         exit(1)
-
-if __name__ == "__main__":
-    create_backup()

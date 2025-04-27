@@ -241,6 +241,6 @@ for i, doctor in enumerate(doctors_data):
     VALUES ('{user_id}', '{doctor['speciality']}',2020, {float(doctor['fees'])}, '{doctor['about'].replace("'", "''")}', '{doctor['degree']}', '{address_str.replace("'", "''")}', 'https://picsum.photos/200/300');
     """
     print(insert_doctor_sql)
-    print("--") # Separator between doctor entries
+    #print("--") # Separator between doctor entries
 
 print("SQL statements generated. Please execute them against your PostgreSQL database.")

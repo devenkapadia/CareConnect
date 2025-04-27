@@ -1,7 +1,8 @@
 import logging
 import json
 from logstash import TCPLogstashHandler
-
+import os
+from config import *
 # Create logger
 logger = logging.getLogger('app_logstash')
 logger.setLevel(logging.INFO)
@@ -13,14 +14,14 @@ class JsonFormatter(logging.Formatter):
             'timestamp': self.formatTime(record, '%Y-%m-%d %H:%M:%S'),
             'level': record.levelname,
             'message': record.msg,
-            'service_name': 'myapp'  # For your index pattern
+            'service_name': 'archive-service'  # For your index pattern
         }
         return json.dumps(log_data).encode('utf-8')  # No \n needed here, handler handles it
 
 # Set up TCPLogstashHandler
 logstash_handler = TCPLogstashHandler(
-    host='172.17.0.1',
-    port=5044,
+    host=LOGSTASH_HOST,#'172.17.0.1',
+    port=LOGSTASH_PORT,
     message_type='logstash'  # Default type, compatible with JSON codec
 )
 logstash_formatter = JsonFormatter()
@@ -28,6 +29,3 @@ logstash_handler.setFormatter(logstash_formatter)
 
 # Add handler to logger
 logger.addHandler(logstash_handler)
-
-#logger.info('YESSSSSSSSSSSSSSSSSSSS!')
-

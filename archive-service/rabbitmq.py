@@ -1,12 +1,12 @@
 import pika
 import os
-
+from config import *
 class RabbitMQ:
     def __init__(self):
-        self.user = os.getenv('RABBITMQ_USER', 'guest')
-        self.password = os.getenv('RABBITMQ_PASSWORD', 'guest')
-        self.host = os.getenv('RABBITMQ_HOST', 'localhost')
-        self.port = int(os.getenv('RABBITMQ_PORT', 5672))
+        self.user = RABBITMQ_USERNAME
+        self.password = RABBITMQ_PASSWORD
+        self.host = RABBITMQ_HOST
+        self.port = RABBITMQ_PORT
         self.connection = None
         self.channel = None
         self.connect()
@@ -24,6 +24,7 @@ class RabbitMQ:
     def consume(self, queue_name, callback):
         if not self.channel:
             raise Exception("Connection is not established.")
+        self.channel.queue_declare(queue=queue_name, durable=True)
         self.channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
         self.channel.start_consuming()
 

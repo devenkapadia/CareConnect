@@ -50,7 +50,7 @@
 --------------------------
 # Deployment
 - Adding logging in the services whereever needed.
-- Add rabbitmq and background worker for email and data clean + backup
+- Archive service checking
 
 
 20:00

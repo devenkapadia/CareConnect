@@ -1,0 +1,49 @@
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: careconnect-backup-pvc
+  namespace: careconnect
+  labels:
+    app: archive-service
+spec:
+  volumeName: careconnect-backup-pv
+  storageClassName: "" #standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: careconnect
+  labels:
+    app: postgres
+spec:
+  storageClassName: "" #standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: careconnect-shared-pv 
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: careconnect-rabbitmq-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: careconnect-rabbitmq-pv 
+  storageClassName: "" #standard

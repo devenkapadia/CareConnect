@@ -1,0 +1,29 @@
+- name: Check if kubectl is installed
+  shell: which kubectl
+  register: kubectl_check
+  ignore_errors: yes
+
+- name: Fail if kubectl is not installed
+  fail:
+    msg: "kubectl not found! Please install kubectl."
+  when: kubectl_check.rc != 0
+
+- name: Check if minikube is installed
+  shell: which minikube
+  register: minikube_check
+  ignore_errors: yes
+
+- name: Fail if minikube is not installed
+  fail:
+    msg: "minikube not found! Please install minikube."
+  when: minikube_check.rc != 0
+
+- name: Check if minikube is running
+  shell: minikube status --format '{{.Host}}'
+  register: minikube_status
+  ignore_errors: yes
+
+- name: Fail if minikube is not running
+  fail:
+    msg: "Minikube is not running! Please start minikube."
+  when: "'Running' not in minikube_status.stdout"

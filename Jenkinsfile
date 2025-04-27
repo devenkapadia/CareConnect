@@ -18,83 +18,47 @@ pipeline {
                 }
             }
         }
-        stage('Clean & Build auth-service') {
+        stage('Clean & Build Spring Boot Services') {
             steps {
                 script {
                     dir('auth-service') {
                         sh 'mvn clean -DskipTests=true  package'
                     }
-                }
-            }
-        }
-        stage('Clean & Build admin-service') {
-            steps {
-                script {
                     dir('admin-service') {
                         sh 'mvn clean -DskipTests=true  package'
                     }
-                }
-            }
-        }
-        stage('Clean & Build user-service') {
-            steps {
-                script {
                     dir('user-service') {
                         sh 'mvn clean -DskipTests=true  package'
                     }
-                }
-            }
-        }
-        stage('Clean & Build doctor-service') {
-            steps {
-                script {
                     dir('doctor-service') {
                         sh 'mvn clean -DskipTests=true  package'
                     }
                 }
             }
         }
-        stage('Build frontend-service docker image') {
+        stage('Building docker images') {
             steps {
                 script {
                     dir('frontend') {
                         sh 'docker build -t shubhpatel2610/frontend-service .'
                     }
-                }
-            }
-        }
-        stage('Build auth-service docker image') {
-            steps {
-                script {
                     dir('auth-service') {
                         sh 'docker build -t shubhpatel2610/auth-service .'
                     }
-                }
-            }
-        }
-        stage('Build admin-service docker image') {
-            steps {
-                script {
                     dir('admin-service') {
                         sh 'docker build -t shubhpatel2610/admin-service .'
                     }
-                }
-            }
-        }
-        stage('Build user-service docker image') {
-            steps {
-                script {
                     dir('user-service') {
                         sh 'docker build -t shubhpatel2610/user-service .'
                     }
-                }
-            }
-        }
-        stage('Build doctor-service docker image') {
-            steps {
-                script {
                     dir('doctor-service') {
                         sh 'docker build -t shubhpatel2610/doctor-service .'
+                    }
+                    dir('email-service') {
+                        sh 'docker build -t shubhpatel2610/email-service .'
+                    }
+                    dir('archive-service') {
+                        sh 'docker build -t shubhpatel2610/archive-service .'
                     }
                 }
             }
@@ -108,6 +72,8 @@ pipeline {
                     sh "docker push shubhpatel2610/admin-service"
                     sh "docker push shubhpatel2610/user-service"
                     sh "docker push shubhpatel2610/doctor-service"
+                    sh "docker push shubhpatel2610/email-service"
+                    sh "docker push shubhpatel2610/archive-service"
                     }
                  }
             }

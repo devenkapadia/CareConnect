@@ -1,0 +1,13 @@
+- name: Start ELK and DB
+  shell: ./elk-db.sh
+  args:
+    chdir: /path/to/scripts
+
+- name: Wait 60 seconds for ELK and DB to initialize
+  pause:
+    seconds: 60
+
+- name: Start application services and ingress
+  shell: ./start.sh
+  args:
+    chdir: /path/to/scripts

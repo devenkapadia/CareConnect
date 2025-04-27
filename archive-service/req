@@ -1,0 +1,5 @@
+python-logstash
+psycopg2-binary
+pika
+logstash-formatter
+pytz
