@@ -46,7 +46,7 @@ spec:
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: careconnect-db-credentials
+              name: careconnect-db-credentials 
               key: db-password
         - name: RABBITMQ_HOST
           valueFrom:

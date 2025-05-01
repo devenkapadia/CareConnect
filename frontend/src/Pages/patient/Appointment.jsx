@@ -94,6 +94,9 @@ const Appointment = () => {
     (p) => p.patient_id === selectedPatientId
   );
 
+  console.log("slot obj",  selectedSlotObj);
+  
+
   const handleConfirmBooking = async () => {
     const slot = docSlots[selectedDay][selectedSlot];
     console.log("Selected Slot:", slot);
@@ -363,7 +366,7 @@ const Appointment = () => {
               <p className="text-gray-700 mb-3">
                 Date:{" "}
                 <span className="font-semibold">
-                  {selectedSlotObj.formattedDate}
+                  {new Date(selectedSlotObj.datetime).toISOString().split('T')[0]}
                 </span>
               </p>
               <p className="text-gray-700 mb-6">

@@ -8,4 +8,4 @@ EXPOSE 3001
 
 ENTRYPOINT ["java","-jar","app.jar"]
 
-#mvn clean -DskipTests=true  package
+#mvn clean -DskipTests=true package

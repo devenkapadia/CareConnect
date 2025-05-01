@@ -21,7 +21,7 @@ const Appointments = () => {
       setLoading(false);
     };
     fetchData();
-  }, [fetchAppointments]);
+  }, [fetchAppointments, appointments]);
 
   useEffect(() => {
     if (appointments) {
