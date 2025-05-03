@@ -103,8 +103,8 @@ const Appointment = () => {
 
     const dateObj = slot.datetime;
 
-    // Format date as YYYY-MM-DD
-    const formattedDate = dateObj.toISOString().split("T")[0];
+    const [year, month, day] = dateObj.toISOString().split("T")[0].split("-");
+    const formattedDate = ${day}-${month}-${year};
 
     // Extract hour (e.g., from "19:00 PM" get "19")
     const hour = slot.time.split(":")[0];
@@ -366,7 +366,7 @@ const Appointment = () => {
               <p className="text-gray-700 mb-3">
                 Date:{" "}
                 <span className="font-semibold">
-                  {new Date(selectedSlotObj.datetime).toISOString().split('T')[0]}
+                   {new Date(selectedSlotObj.datetime).toLocaleDateString('en-GB').replaceAll('/', '-')}
                 </span>
               </p>
               <p className="text-gray-700 mb-6">
