@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class PatientService {
     private final PatientRepo repo;
     private final UserRepo userRepo;
     private final PatientMapper mapper;
+    private static final Logger log = LoggerFactory.getLogger(PatientService.class);
 
     public List<PatientResponse> addPatient(PatientRequest.AddRequest request, String id) {
         Patient patient = mapper.toEntity(request);
@@ -32,6 +35,7 @@ public class PatientService {
         }
         patient.setUser(user.get());
         repo.save(patient);
+        log.info("Patient added successfully : " + patient.getPatient_id());
         return getALlPatient(id);
     }
 
@@ -40,6 +44,7 @@ public class PatientService {
         if(patients.isEmpty()) {
             return new ArrayList<>();
         }
+        log.info("Fetched all patients successfully");
         return patients.get().stream() // Get the List and create a stream of Patient
                 .map(PatientResponse::fromEntity)
                 .collect(Collectors.toList());

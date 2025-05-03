@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class DoctorService {
     private final UserRepo userRepo;
     private final PatientMapper mapper;
     private final AppointmentService appointmentService;
+    private static final Logger log = LoggerFactory.getLogger(DoctorService.class);
 
     public DoctorResponse.CompleteDetails getDoctorById(String id) {
         Optional<Doctor> doctor = repo.findById(UUID.fromString(id));
@@ -62,6 +66,7 @@ public class DoctorService {
                 availableSlots,
                 doctorAppointmentDetails
         );
+        log.info("Fetched doctor with ID: " + id);
         return completeDetails;
     }
 

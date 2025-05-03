@@ -49,7 +49,6 @@
 - ELK **DONE** 
 --------------------------
 # Deployment
-- Adding logging in the services whereever needed.
 - Archive service checking
 
 

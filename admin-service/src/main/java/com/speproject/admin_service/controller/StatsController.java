@@ -11,15 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/admin/stats")
 public class StatsController {
     private final StatsService statsService;
+    private static final Logger log = LoggerFactory.getLogger(StatsController.class);
     @GetMapping
     public ResponseEntity<Map<String, Long>> getStats() {
         Map<String, Long> stats = statsService.getStats();
+        log.info("Fetched stats successfully");
         return ResponseEntity.ok(stats);
     }
 }

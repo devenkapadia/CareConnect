@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +31,11 @@ public class DoctorService {
     private final UserRepo userRepo;
     private final PatientMapper mapper;
     private final ArchivedAppointmentRepo archivedAppointmentRepo;
+    private static final Logger log = LoggerFactory.getLogger(DoctorService.class);
+
     public Map<String, List<DoctorResponse.BasicDetails>> getALlDoctors(String id) {
         List<Doctor> doctors = repo.findAll();
+        log.info("Fetched all doctors successfully");
         return doctors.stream()
                 .map(DoctorResponse.BasicDetails::fromEntity)
                 .collect(Collectors.groupingBy(DoctorResponse.BasicDetails::getSpecialization));
@@ -130,6 +136,7 @@ public class DoctorService {
                 availableSlots
               //  doctorAppointmentDetails
         );
+        log.info("Fetched doctor with ID: " + reqid);
         return completeDetails;
     }
 

@@ -11,17 +11,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class PublicService {
     private final FeedbackRepo repo;
     private final FeedbackMapper mapper;
-
+    private static final Logger log = LoggerFactory.getLogger(PublicService.class);
     public void addFeeback(PublicRequest.FeedbackRequest request) {
         try {
             Feedback feedback = mapper.toEntity(request);
             repo.save(feedback);
+            log.info("Feedback added successfully : " + feedback.getEmail());
         }
         catch (Exception e) {
             throw new CustomException.BadRequest(e.getMessage());

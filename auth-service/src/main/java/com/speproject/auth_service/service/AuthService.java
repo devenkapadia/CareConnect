@@ -37,6 +37,7 @@ public class AuthService {
         user.setRole(role);
         user.setPassword(encryptionService.encode(user.getPassword()));
         user = repo.save(user);
+        log.info(role + " registered successfully: " + user.getName());
         return user;
     }
 

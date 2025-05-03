@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class AppointmentService {
     private final DoctorRepo doctorRepo;
     private final AppointmentMapper mapper;
     private final ArchivedAppointmentRepo archivedAppointmentRepo;
-
+    private static final Logger log = LoggerFactory.getLogger(AppointmentService.class);
 
     public Map<String,List<AppointmentResponse.AppointmentDetails>> getAllAppointments(String id) {
         Map<String,List<AppointmentResponse.AppointmentDetails>> output = new HashMap<>();
@@ -65,6 +67,7 @@ public class AppointmentService {
             old.add(data);
         }
         output.put("completed_appointments", old);
+        log.info("Fetched all appointments successfully");
         return output;
     }
 
@@ -87,9 +90,10 @@ public class AppointmentService {
         if (!inputDateTime.isAfter(now)) {
             throw new CustomException.BadRequest("Only future appointments can be approved.");
         }
-
+        
         appointment1.setStatus(new_status);
         repo.save(appointment1);
+        log.info("Updated appointment status successfully for appointment ID: " + appid + " to " + new_status);
         return getAllAppointments(id);
     }
 

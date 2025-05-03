@@ -16,6 +16,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class AppointmentService {
     private final DoctorRepo doctorRepo;
     private final AppointmentMapper mapper;
     private final ArchivedAppointmentRepo archivedAppointmentRepo;
+    private static final Logger log = LoggerFactory.getLogger(AppointmentService.class);
 
     public Map<String,List<AppointmentResponse.AppointmentDetails>> makeAppointment(AppointmentRequest.AddRequest request, String id) {
         Appointment appointment = mapper.toEntity(request,id);
@@ -56,6 +60,7 @@ public class AppointmentService {
         appointment.setDoctor(doctor.get());
         appointment.setUser(user.get());
         repo.save(appointment);
+        log.info("Appointment created successfully: " + appointment.getAppointment_id());
         return getAllAppointments(id);
     }
 
@@ -100,6 +105,7 @@ public class AppointmentService {
             old.add(data);
         }
         output.put("completed_appointments", old);
+        log.info("Fetched all appointments successfully");
         return output;
     }
 
