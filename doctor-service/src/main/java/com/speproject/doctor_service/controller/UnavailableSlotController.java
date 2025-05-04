@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/doctor")
+@RequestMapping("/api/v1/doctor/unavailable")
 @RequiredArgsConstructor
 public class UnavailableSlotController {
 
     private final UnavailableSlotService slotService;
 
-    @PostMapping("/unavailable")
+    @PostMapping
     public ResponseEntity<String> addUnavailableSlots(
             @AuthenticationPrincipal String doctorId,  // Extracted from token
             @RequestBody UnavailableSlotRequestDTO dto
@@ -34,7 +34,7 @@ public class UnavailableSlotController {
         }
     }
 
-    @GetMapping("/unavailable")
+    @GetMapping
     public List<UnavailableSlot> getUnavailableSlots(
             @AuthenticationPrincipal String doctorId,  // Extracted from token
             @RequestParam(required = false)
