@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/doctor/slots")
+@RequestMapping("/api/v1/doctor")
 @RequiredArgsConstructor
 public class UnavailableSlotController {
 

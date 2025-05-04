@@ -80,9 +80,7 @@ export const DoctorProvider = ({ children }) => {
   // Fetch unavailable slots
   const getUnavailableSlots = async () => {
     try {
-      if (!token) throw new Error("JWT token not found in cookies");
-  
-      const response = await fetch(`${src}/doctor/slots/unavailable`, {
+      const response = await fetch(`${src}/doctor/unavailable`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -107,11 +105,9 @@ export const DoctorProvider = ({ children }) => {
   // Mark slot as unavailable
   const markSlotUnavailable = async (slots) => {
     try {
-      if (!token) throw new Error("JWT token not found in cookies");
-  
       const requestBody = { slots };
   
-      const response = await fetch(`${src}/doctor/slots/unavailable`, {
+      const response = await fetch(`${src}/doctor/unavailable`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
