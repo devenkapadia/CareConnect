@@ -1,6 +1,5 @@
 package com.speproject.user_service.dto;
 
-import com.speproject.user_service.entity.Appointment;
 import com.speproject.user_service.entity.User;
 import com.speproject.user_service.entity.Doctor;
 import lombok.Builder;
@@ -68,8 +67,8 @@ public class DoctorResponse {
             String image,
             String degree,
             String address,
-            Map<String, List<String>> slots_available
-    ) {
+            Map<String, List<String>> slots_available,
+            Map<String, List<AppointmentResponse.AppointmentDetails>> doctorAppointmentDetails) {
         // You can add additional methods if needed
     }
 }

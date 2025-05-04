@@ -1,19 +1,19 @@
 version: "3.8"
 services:
-  auth-service:
-    image: shubhpatel2610/auth-service:latest
-    ports:
-      - "3001:3001"
-    environment:
-      JWT_SECRET: cr666N7wIV+KJ2xOQpWtcfAekL4YXd9gbnJMs8SJ9sI=
-      DB_HOST: db.careconnect.261403.xyz
-      DB_PORT: 5432
-      DB_NAME: careconnect
-      DB_USERNAME: careconnect
-      DB_PASSWORD: QWERTqwert@12345
+  # auth-service:
+  #   image: shubhpatel2610/auth-service:latest
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     JWT_SECRET: cr666N7wIV+KJ2xOQpWtcfAekL4YXd9gbnJMs8SJ9sI=
+  #     DB_HOST: db.careconnect.261403.xyz
+  #     DB_PORT: 5432
+  #     DB_NAME: careconnect
+  #     DB_USERNAME: careconnect
+  #     DB_PASSWORD: QWERTqwert@12345
 
   user-service:
-    image: shubhpatel2610/user-service:latest
+    image: user-service:test
     ports:
       - "3002:3002"
     environment:
@@ -25,7 +25,7 @@ services:
       DB_PASSWORD: QWERTqwert@12345
   
   doctor-service:
-    image: shubhpatel2610/doctor-service:latest
+    image: doctor-service:test
     ports:
       - "3003:3003"
     environment:
@@ -35,14 +35,15 @@ services:
       DB_NAME: careconnect
       DB_USERNAME: careconnect
       DB_PASSWORD: QWERTqwert@12345
-  admin-service:
-    image: shubhpatel2610/admin-service:latest
-    ports:
-      - "3004:3004"
-    environment:
-      JWT_SECRET: cr666N7wIV+KJ2xOQpWtcfAekL4YXd9gbnJMs8SJ9sI=
-      DB_HOST: db.careconnect.261403.xyz
-      DB_PORT: 5432
-      DB_NAME: careconnect
-      DB_USERNAME: careconnect
-      DB_PASSWORD: QWERTqwert@12345
+      
+  # admin-service:
+  #   image: shubhpatel2610/admin-service:latest
+  #   ports:
+  #     - "3004:3004"
+  #   environment:
+  #     JWT_SECRET: cr666N7wIV+KJ2xOQpWtcfAekL4YXd9gbnJMs8SJ9sI=
+  #     DB_HOST: db.careconnect.261403.xyz
+  #     DB_PORT: 5432
+  #     DB_NAME: careconnect
+  #     DB_USERNAME: careconnect
+  #     DB_PASSWORD: QWERTqwert@12345

@@ -5,6 +5,9 @@ import Cookies from "js-cookie";
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
+  const src = "http://localhost:3002/api/v1";
+  // const src = "http://careconnect.local/api/v1"
+
   const [doctors, setDoctors] = useState([]);
   const [speciality, setSpciality] = useState([]);
   const currencySymbol = "$";
@@ -12,7 +15,7 @@ const AppContextProvider = (props) => {
   // Function to fetch doctors from API
   const fetchDoctors = async () => {
     try {
-      const response = await fetch("http://careconnect.local/api/v1/user/doctor", {
+      const response = await fetch(`${src}/user/doctor`, {
         method: "GET",
       });
 
@@ -34,7 +37,7 @@ const AppContextProvider = (props) => {
   const fetchDoctorById = async (id) => {
     try {
       const response = await fetch(
-        `http://careconnect.local/api/v1/user/doctor/${id}`,
+        `${src}/user/doctor/${id}`,
         {
           method: "GET",
           headers: {
@@ -65,7 +68,7 @@ const AppContextProvider = (props) => {
 
     try {
       const response = await fetch(
-        "http://careconnect.local/api/v1/user/public/feedback",
+        `${src}/user/public/feedback`,
         {
           method: "POST",
           body: JSON.stringify(payload),

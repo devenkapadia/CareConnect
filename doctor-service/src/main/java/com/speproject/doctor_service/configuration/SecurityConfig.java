@@ -4,6 +4,7 @@ import com.speproject.doctor_service.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,8 +35,10 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions with JWT
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/doctor/public/**").permitAll() // Allow public endpoints if any (e.g., login, register)
-                        .anyRequest().authenticated() // All other requests require authentication
+                        .requestMatchers("/api/v1/doctor/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/doctor/info/**").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
         return http.build();

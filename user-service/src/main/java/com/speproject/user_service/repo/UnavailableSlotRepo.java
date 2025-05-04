@@ -1,6 +1,6 @@
 package com.speproject.user_service.repo;
 
-import com.speproject.doctor_service.entity.UnavailableSlot;
+import com.speproject.user_service.entity.UnavailableSlot;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

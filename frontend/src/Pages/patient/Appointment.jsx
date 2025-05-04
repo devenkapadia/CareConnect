@@ -24,7 +24,7 @@ const Appointment = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const getDoctor = async () => {
-      if (token) fetchPatients();
+      if (token) await fetchPatients();
       const doc = await fetchDoctorById(docId);
       setDocInfo(doc);
       console.log(docInfo);
@@ -43,11 +43,11 @@ const Appointment = () => {
 
   useEffect(() => {
     const getAvailableSlots = () => {
-      let today = new Date();
-      let slots = [];
+      const today = new Date();
+      const slots = [];
 
       for (let i = 0; i < 7; i++) {
-        let currentDate = new Date(today);
+        const currentDate = new Date(today);
         currentDate.setDate(today.getDate() + i);
 
         const formattedDate = currentDate
@@ -55,22 +55,26 @@ const Appointment = () => {
           .split("T")[0]
           .split("-")
           .reverse()
-          .join("-");
+          .join("-"); // Format: DD-MM-YYYY
 
-        let timeSlots = [];
-        for (let h = 9; h <= 20; h++) {
-          let time = `${h}:00 AM`;
-          if (h >= 12) {
-            time = `${h}:00 PM`;
-          }
+        const timeSlots = [];
+
+        for (let h = 9; h < 21; h++) {
+          const startHour = h.toString().padStart(2, "0");
+          const endHour = (h + 1).toString().padStart(2, "0");
+          const slotLabel = `${startHour}:00 - ${endHour}:00`; // Match backend format
 
           const isAvailable =
-            docInfo?.slots_available[formattedDate]?.includes(`${h}:00`) ||
+            docInfo?.slots_available?.[formattedDate]?.includes(slotLabel) ||
             false;
 
+          const hour12 = h % 12 === 0 ? 12 : h % 12;
+          const ampm = h < 12 ? "AM" : "PM";
+          const timeLabel = `${hour12}:00 ${ampm}`;
+
           timeSlots.push({
-            datetime: new Date(currentDate),
-            time,
+            datetime: new Date(currentDate.setHours(h, 0, 0, 0)),
+            time: timeLabel,
             available: isAvailable,
           });
         }
@@ -94,8 +98,7 @@ const Appointment = () => {
     (p) => p.patient_id === selectedPatientId
   );
 
-  console.log("slot obj",  selectedSlotObj);
-  
+  console.log("slot obj", selectedSlotObj);
 
   const handleConfirmBooking = async () => {
     const slot = docSlots[selectedDay][selectedSlot];
@@ -104,7 +107,7 @@ const Appointment = () => {
     const dateObj = slot.datetime;
 
     const [year, month, day] = dateObj.toISOString().split("T")[0].split("-");
-    const formattedDate = ${day}-${month}-${year};
+    const formattedDate = `${day}-${month}-${year}`;
 
     // Extract hour (e.g., from "19:00 PM" get "19")
     const hour = slot.time.split(":")[0];
@@ -366,7 +369,9 @@ const Appointment = () => {
               <p className="text-gray-700 mb-3">
                 Date:{" "}
                 <span className="font-semibold">
-                   {new Date(selectedSlotObj.datetime).toLocaleDateString('en-GB').replaceAll('/', '-')}
+                  {new Date(selectedSlotObj.datetime)
+                    .toLocaleDateString("en-GB")
+                    .replaceAll("/", "-")}
                 </span>
               </p>
               <p className="text-gray-700 mb-6">

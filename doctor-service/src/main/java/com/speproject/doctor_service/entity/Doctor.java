@@ -9,8 +9,10 @@ import org.antlr.v4.runtime.misc.Pair;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -68,36 +70,43 @@ public class Doctor {
     protected void onUpdate() {
         updated_at = new Date();
     }
-    public int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
 
-    public Map<String, List<String>> getAvailableSlots(List<Pair<String, String>> bookedSlots) {
-        Map<String, List<String>> availableSlots = new LinkedHashMap<>();
+    private static final List<Pair<LocalTime, LocalTime>> FIXED_SLOTS = List.of(
+            new Pair<>(LocalTime.of(9, 0), LocalTime.of(10, 0)),
+            new Pair<>(LocalTime.of(10, 0), LocalTime.of(11, 0)),
+            new Pair<>(LocalTime.of(11, 0), LocalTime.of(12, 0)),
+            new Pair<>(LocalTime.of(12, 0), LocalTime.of(13, 0)),
+            new Pair<>(LocalTime.of(13, 0), LocalTime.of(14, 0)),
+            new Pair<>(LocalTime.of(14, 0), LocalTime.of(15, 0)),
+            new Pair<>(LocalTime.of(15, 0), LocalTime.of(16, 0)),
+            new Pair<>(LocalTime.of(16, 0), LocalTime.of(17, 0)),
+            new Pair<>(LocalTime.of(17, 0), LocalTime.of(18, 0)),
+            new Pair<>(LocalTime.of(18, 0), LocalTime.of(19, 0)),
+            new Pair<>(LocalTime.of(19, 0), LocalTime.of(20, 0)),
+            new Pair<>(LocalTime.of(20, 0), LocalTime.of(21, 0))
+    );
+
+
+    public Map<LocalDate, List<String>> getAvailableSlots(List<UnavailableSlot> unavailableSlots) {
+        Map<LocalDate, List<String>> availableSlots = new LinkedHashMap<>();
         LocalDate today = LocalDate.now();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        // Generate slots for the next 7 days
         for (int i = 0; i < 7; i++) {
-            LocalDate currentDate = today.plusDays(i);
-            String formattedDate = currentDate.format(dateFormatter);
-            List<String> slots = new ArrayList<>();
-            int drop1 = getRandomNumber(9,20);
-            int drop2 = getRandomNumber(9,20);
-            int drop3 = getRandomNumber(9,20);
-            for (int j = 9; j < 21; j++) { // Time slots from 10:00 to 20:00
-                String timeSlot = String.format("%02d:00", j);
-                Pair<String, String> temp = new Pair<>(formattedDate, timeSlot); // Create a Pair with date and time
+            LocalDate date = today.plusDays(i);
+            List<Pair<LocalTime, LocalTime>> available = new ArrayList<>(FIXED_SLOTS);
 
-                if (bookedSlots.contains(temp)) {
-                    continue; // Skip booked slots
+            // Remove unavailable slots for this date
+            for (UnavailableSlot slot : unavailableSlots) {
+                if (slot.getDate().equals(date)) {
+                    available.removeIf(s -> s.a.equals(slot.getStartTime()));
                 }
-                if(j==drop1 || j==drop2 || j==drop3) continue;
-                // Adding time to the slots list
-                slots.add(timeSlot);
             }
 
-            availableSlots.put(formattedDate, slots); // Add the date and its available slots to the map
+            List<String> slotStrings = available.stream()
+                    .map(pair -> pair.a.toString() + " - " + pair.b.toString())
+                    .collect(Collectors.toList());
+
+            availableSlots.put(date, slotStrings);
         }
 
         return availableSlots;

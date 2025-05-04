@@ -132,6 +132,16 @@ data:
         updated_at TIMESTAMP NOT NULL
     );
 
+    CREATE TABLE unavailable_slots (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        doctor_id UUID NOT NULL REFERENCES doctors(doctor_id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        start_time TIME NOT NULL,
+        end_time TIME NOT NULL,
+        CONSTRAINT fk_unavailable_doctor FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
+    );
+
+
     -- Data
     INSERT INTO app_users (user_id, email, password, role, name, created_at, updated_at) VALUES
     ('ff418aa9-8d81-4435-9c91-98b903f29421', 'shubh@a.com', '$2a$10$bX0BeYojJ6x6HUrMk0O.Re3aplCIrilgxnHsI9u.yMmzFco6XWaHK', 'PATIENT', 'Shubh', '2025-03-29 15:03:22.228', '2025-03-29 15:03:22.228'),
@@ -193,6 +203,19 @@ data:
     ('366484ef-462b-4eb6-a2d6-a16de5cadbcb', 'Test comments', '2025-03-31 23:11:00.809', 'test@a.com', 'test', '2025-03-31 23:11:00.809'),
     ('a4ea68a6-6e8a-41e1-94b2-3516f221cc84', 'This app is made by some skillful person', '2025-04-06 17:07:18.661', 'devenkapadia1@gmail.com', 'Ancient Aliens', '2025-04-06 17:07:18.661'),
     ('a2b11a5e-8047-4769-a18d-23bd89dd8b30', 'adadw', '2025-04-06 17:07:34.797', 'devenkapadia1@gmail.com', 'Ancient Aliens', '2025-04-06 17:07:34.797');
+
+    INSERT INTO unavailable_slots (doctor_id, date, start_time, end_time)
+    VALUES ('a019011a-a561-40d3-af7d-97a97103ea98', '2025-05-06', '10:00:00', '11:00:00');
+
+    INSERT INTO unavailable_slots (doctor_id, date, start_time, end_time)
+    VALUES ('7f2ec725-43d6-47e8-8394-b84aefd5e93d', '2025-05-07', '14:00:00', '15:00:00');
+
+    INSERT INTO unavailable_slots (doctor_id, date, start_time, end_time)
+    VALUES ('0fc630f8-da54-4673-bcb0-7389eaa8d707', '2025-05-06', '09:00:00', '10:00:00');
+
+    INSERT INTO unavailable_slots (doctor_id, date, start_time, end_time)
+    VALUES ('bf9902f3-79c8-4830-9ba8-12a2134049a3', '2025-05-10', '11:00:00', '12:00:00');
+
 ---
 # Deployment
 apiVersion: apps/v1

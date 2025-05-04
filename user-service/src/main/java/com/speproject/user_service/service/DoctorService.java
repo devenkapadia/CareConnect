@@ -7,16 +7,15 @@ import com.speproject.user_service.dto.PatientResponse;
 import com.speproject.user_service.entity.*;
 import com.speproject.user_service.exception.CustomException;
 import com.speproject.user_service.mapper.PatientMapper;
-import com.speproject.user_service.repo.AppointmentRepo;
-import com.speproject.user_service.repo.ArchivedAppointmentRepo;
-import com.speproject.user_service.repo.DoctorRepo;
-import com.speproject.user_service.repo.UserRepo;
+import com.speproject.user_service.repo.*;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -31,6 +30,8 @@ public class DoctorService {
     private final UserRepo userRepo;
     private final PatientMapper mapper;
     private final ArchivedAppointmentRepo archivedAppointmentRepo;
+    private final UnavailableSlotRepo unavailableSlotRepo;
+    private final AppointmentService appointmentService;
     private static final Logger log = LoggerFactory.getLogger(DoctorService.class);
 
     public Map<String, List<DoctorResponse.BasicDetails>> getALlDoctors(String id) {
@@ -52,93 +53,60 @@ public class DoctorService {
         }
     }
 
-    public DoctorResponse.CompleteDetails getDoctorById(String reqid) {
-        Optional<Doctor> doctor = repo.findById(UUID.fromString(reqid));
-        if(doctor.isEmpty()){
-            throw new CustomException.NotFound("Doctor not found");
-        }
-        Doctor doctorData = doctor.get();
-        Optional<List<Appointment>> appointments = appointmentRepo.findByDoctor_Id(UUID.fromString(reqid));
-        List<Appointment> appointmentList = new ArrayList<>();
-        if(appointments.isPresent()){
-            appointmentList = appointments.get();
-        }
-        List<Pair<String, String>> bookedSlots = new ArrayList<>();
-        for (Appointment appointment : appointmentList) {
-            String date = appointment.getDate();
-            String time = appointment.getTime();
-            bookedSlots.add(new Pair<>(date, time)); // Store as a Pair
-        }
+    public DoctorResponse.CompleteDetails getDoctorById(String id) {
+        UUID doctorId = UUID.fromString(id);
 
-        Map<String, List<String>> availableSlots = doctor.get().getAvailableSlots(bookedSlots);
-        Map<String, List<AppointmentResponse.AppointmentDetails>> doctorAppointmentDetails = new HashMap<>();
-        /*if(isUUID(id)) {
-            Optional<List<Appointment>> myAppointments = appointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id), UUID.fromString(reqid));
-            List<Appointment> appointments1 = new ArrayList<>();
-            if (myAppointments.isPresent()) {
-                appointments1 = myAppointments.get();
-            }
+        // 1. Fetch doctor entity
+        Doctor doctor = repo.findById(doctorId)
+                .orElseThrow(() -> new CustomException.NotFound("Doctor not found"));
 
-            Optional<List<Appointment>> appointmentsCurr = appointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id), UUID.fromString(reqid));
-            if (!appointmentsCurr.isEmpty()) {
-                List<AppointmentResponse.AppointmentDetails> pending = new ArrayList<>();
-                for (Appointment appointment : appointmentsCurr.get()) {
-                    DoctorResponse.BasicDetails doctorCuur = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
-                    PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
-                    AppointmentResponse.AppointmentDetails data = new AppointmentResponse.AppointmentDetails(
-                            appointment.getAppointment_id(),
-                            doctorCuur,
-                            patient,
-                            appointment.getDate(),
-                            appointment.getTime(),
-                            appointment.getStatus().toString()
-                    );
-                    pending.add(data);
-                }
+        // 2. Fetch unavailable slots for next 7 days
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(6); // next 7 days
 
-                doctorAppointmentDetails.put("pending_appointments", pending);
-            }
-            Optional<List<ArchivedAppointment>> archivedAppointments = archivedAppointmentRepo.findByUser_IdAndDoctor_Id(UUID.fromString(id), UUID.fromString(reqid));
-            if (!archivedAppointments.isEmpty()) {
-                List<AppointmentResponse.AppointmentDetails> old = new ArrayList<>();
-                for (ArchivedAppointment appointment : archivedAppointments.get()) {
-                    DoctorResponse.BasicDetails doctorCuur = DoctorResponse.BasicDetails.fromEntity(appointment.getDoctor());
-                    PatientResponse patient = PatientResponse.fromEntity(appointment.getPatient());
-                    AppointmentResponse.AppointmentDetails data = new AppointmentResponse.AppointmentDetails(
-                            appointment.getAppointment_id(),
-                            doctorCuur,
-                            patient,
-                            appointment.getDate(),
-                            appointment.getTime(),
-                            appointment.getStatus().toString()
-                    );
-                    old.add(data);
-                }
-                doctorAppointmentDetails.put("completed_appointments", old);
-            }
-        }else{
-            doctorAppointmentDetails.put("pending_appointments", new ArrayList<>());
-            doctorAppointmentDetails.put("completed_appointments", new ArrayList<>());
-        }*/
-        int currentYear = new Date().getYear() + 1900;
-        int yearsOfExperience = currentYear - doctorData.getStarted_year();
+        List<UnavailableSlot> unavailableSlots = unavailableSlotRepo
+                .findByDoctor_IdAndDateBetween(doctorId, today, endDate);
 
+        // 3. Get available slots from Doctor entity method
+        Map<LocalDate, List<String>> rawAvailableSlots = doctor.getAvailableSlots(unavailableSlots);
+
+        // 4. Convert LocalDate keys to formatted string for response
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        Map<String, List<String>> availableSlots = rawAvailableSlots.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().format(formatter),
+                        Map.Entry::getValue,
+                        (a, b) -> b,
+                        LinkedHashMap::new // to preserve order
+                ));
+
+        // 5. Get appointments for doctor
+        Map<String, List<AppointmentResponse.AppointmentDetails>> doctorAppointmentDetails =
+                appointmentService.getAllAppointments(id);
+
+        // 6. Calculate experience
+        int currentYear = LocalDate.now().getYear();
+        int yearsOfExperience = currentYear - doctor.getStarted_year();
+
+        // 7. Build response
         DoctorResponse.CompleteDetails completeDetails = new DoctorResponse.CompleteDetails(
-                doctorData.getId(),
-                doctorData.getUser().getName(),
-                doctorData.getSpecialization(),
+                doctor.getId(),
+                doctor.getUser().getName(),
+                doctor.getSpecialization(),
                 yearsOfExperience,
-                doctorData.getConsultation_fee(),
-                doctorData.getAbout(),
-                doctorData.getImage(),
-                doctorData.getDegree(),
-                doctorData.getAddress(),
-                availableSlots
-              //  doctorAppointmentDetails
+                doctor.getConsultation_fee(),
+                doctor.getAbout(),
+                doctor.getImage(),
+                doctor.getDegree(),
+                doctor.getAddress(),
+                availableSlots,
+                doctorAppointmentDetails
         );
-        log.info("Fetched doctor with ID: " + reqid);
+
+        log.info("Fetched doctor with ID: {}", id);
         return completeDetails;
     }
+
 
 
 }
