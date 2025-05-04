@@ -5,8 +5,7 @@ import Cookies from "js-cookie";
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-  const src = "http://localhost:3002/api/v1";
-  // const src = "http://careconnect.local/api/v1"
+  const src = "http://careconnect.local/api/v1"
 
   const [doctors, setDoctors] = useState([]);
   const [speciality, setSpciality] = useState([]);
