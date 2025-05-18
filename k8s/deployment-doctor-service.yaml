@@ -48,3 +48,23 @@ spec:
             secretKeyRef:
               name: careconnect-db-credentials
               key: db-password
+        - name: RABBITMQ_HOST
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: rabbitmq-host
+        - name: RABBITMQ_PORT
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: rabbitmq-port
+        - name: RABBITMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: rabbitmq-username
+        - name: RABBITMQ_PASSWORD 
+          valueFrom:
+            secretKeyRef:
+              name: careconnect-db-credentials
+              key: rabbitmq-password

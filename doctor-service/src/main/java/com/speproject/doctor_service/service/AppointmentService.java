@@ -92,6 +92,7 @@ public class AppointmentService {
         if (!inputDateTime.isAfter(now)) {
             throw new CustomException.BadRequest("Only future appointments can be approved.");
         }
+        appointment1.setStatus(new_status);
         repo.save(appointment1);
         User user = appointment1.getUser();
         User doctor = appointment1.getDoctor().getUser();
