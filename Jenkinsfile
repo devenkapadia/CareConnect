@@ -86,12 +86,18 @@ pipeline {
                 }
             }
         }
-        stage('Run Ansible Playbook') { 
+        stage('Run Ansible Playbook') {
             steps {
                 script {
                     withEnv(["ANSIBLE_HOST_KEY_CHECKING=False"]) {
-                        dir('ansible') {
-                            sh 'ansible-playbook -i inventory.ini playbook.yaml --ask-vault-pass'
+                        withCredentials([string(credentialsId: 'ansible-vault-password', variable: 'VAULT_PASSWORD')]) {
+                            dir('ansible') {
+                                sh '''
+                                    echo "$VAULT_PASSWORD" > vault_pass.txt
+                                    ansible-playbook -i inventory.ini playbook.yaml --vault-password-file vault_pass.txt
+                                    rm vault_pass.txt
+                                '''
+                            }
                         }
                     }
                 }
