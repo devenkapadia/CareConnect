@@ -2,7 +2,7 @@
   vars_files:
     - vault.yml
   gather_facts: no
-  become: true
+  #become: true
   roles:
     - check
     - run

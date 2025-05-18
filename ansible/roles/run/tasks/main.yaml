@@ -2,6 +2,8 @@
   command: chmod +x elk-db-start.sh start.sh
   args:
     chdir: "{{ (playbook_dir + '/../k8s') | realpath }}"
+  become: yes
+  
 - name: Start ELK and DB
   shell: ./elk-db-start.sh
   args:
@@ -25,4 +27,3 @@
 - name: Show application start output
   debug:
     var: app_start.stdout_lines
-    
