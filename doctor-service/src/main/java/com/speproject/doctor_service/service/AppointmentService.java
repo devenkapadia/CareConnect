@@ -16,6 +16,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
@@ -25,6 +26,7 @@ public class AppointmentService {
     private final DoctorRepo doctorRepo;
     private final AppointmentMapper mapper;
     private final ArchivedAppointmentRepo archivedAppointmentRepo;
+    private final RabbitMQProducer rabbitMQProducer;
     private static final Logger log = LoggerFactory.getLogger(AppointmentService.class);
 
     public Map<String,List<AppointmentResponse.AppointmentDetails>> getAllAppointments(String id) {
@@ -90,9 +92,17 @@ public class AppointmentService {
         if (!inputDateTime.isAfter(now)) {
             throw new CustomException.BadRequest("Only future appointments can be approved.");
         }
-        
-        appointment1.setStatus(new_status);
         repo.save(appointment1);
+        User user = appointment1.getUser();
+        User doctor = appointment1.getDoctor().getUser();
+        Patient patient = appointment1.getPatient();
+        Map<String, String> map = new HashMap<>();
+        map.put("email", user.getEmail());
+        String status = new_status == Appointment.AppointmentStatus.PENDING ? "CONFIRMED" : "REJECTED";
+        map.put("subject", "CONFIRMED: Appointment "+appointment1.getId().toString());
+        map.put("message", "Patient " + patient.getFirst_name()+" "+ patient.getLast_name() + " your appointment with "+doctor.getName()+" was "+status);
+        log.info("Email Sent", user.getEmail());
+        rabbitMQProducer.sendMessage(map.toString());
         log.info("Updated appointment status successfully for appointment ID: " + appid + " to " + new_status);
         return getAllAppointments(id);
     }

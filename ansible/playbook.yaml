@@ -1,5 +1,8 @@
 - hosts: localhost
+  vars_files:
+    - vault.yml
   gather_facts: no
+  #become: true
   roles:
     - check
     - run

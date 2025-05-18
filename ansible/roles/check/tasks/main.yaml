@@ -1,5 +1,5 @@
 - name: Check if kubectl is installed
-  shell: which kubectl
+  command: kubectl version --client=true
   register: kubectl_check
   ignore_errors: yes
 
@@ -9,7 +9,7 @@
   when: kubectl_check.rc != 0
 
 - name: Check if minikube is installed
-  shell: which minikube
+  command: minikube version
   register: minikube_check
   ignore_errors: yes
 
@@ -19,11 +19,15 @@
   when: minikube_check.rc != 0
 
 - name: Check if minikube is running
-  shell: minikube status --format '{{.Host}}'
+  command: minikube status
   register: minikube_status
   ignore_errors: yes
+
+- name: Show minikube status output
+  debug:
+    var: minikube_status.stdout
 
 - name: Fail if minikube is not running
   fail:
     msg: "Minikube is not running! Please start minikube."
-  when: "'Running' not in minikube_status.stdout"
+  when: "minikube_status.stdout is not defined or \"host: Running\" not in minikube_status.stdout"

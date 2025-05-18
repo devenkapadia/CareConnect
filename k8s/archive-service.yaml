@@ -1,82 +1,82 @@
 # CronJob
 apiVersion: batch/v1
-kind: Job #CronJob
+kind: CronJob
 metadata:
   name: archive-service
 spec:
-  # schedule: "0 * * * *"  
-  # timeZone: "Asia/Kolkata"  
-  # successfulJobsHistoryLimit: 1 
-  # failedJobsHistoryLimit: 1   
-  # jobTemplate:
-  #   spec:
-  template:
+  schedule: "0 * * * *"  
+  timeZone: "Asia/Kolkata"  
+  successfulJobsHistoryLimit: 1 
+  failedJobsHistoryLimit: 1   
+  jobTemplate:
     spec:
-      containers:
-      - name: archive-service
-        image: shubhpatel2610/archive-service:latest 
-        env:
-        - name: LOGSTASH_HOST
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: logstash-host
-        - name: LOGSTASH_PORT
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: logstash-port
-        - name: DB_HOST
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-host
-        - name: DB_PORT
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-port
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-name
-        - name: DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: db-password
-        - name: RABBITMQ_HOST
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: rabbitmq-host
-        - name: RABBITMQ_PORT
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: rabbitmq-port
-        - name: RABBITMQ_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: rabbitmq-username
-        - name: RABBITMQ_PASSWORD 
-          valueFrom:
-            secretKeyRef:
-              name: careconnect-db-credentials
-              key: rabbitmq-password
-        volumeMounts:
-        - name: backup-storage
-          mountPath: /app/backups
-      volumes:
-      - name: backup-storage
-        persistentVolumeClaim:
-          claimName: careconnect-backup-pvc
-      restartPolicy: OnFailure
-  backoffLimit: 3
+      template:
+        spec:
+          containers:
+          - name: archive-service
+            image: shubhpatel2610/archive-service:latest 
+            env:
+            - name: LOGSTASH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: logstash-host
+            - name: LOGSTASH_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: logstash-port
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: db-port
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: db-name
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: db-username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: db-password
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: rabbitmq-host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: rabbitmq-port
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: rabbitmq-username
+            - name: RABBITMQ_PASSWORD 
+              valueFrom:
+                secretKeyRef:
+                  name: careconnect-db-credentials
+                  key: rabbitmq-password
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /app/backups
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: careconnect-backup-pvc
+          restartPolicy: OnFailure
+      backoffLimit: 3

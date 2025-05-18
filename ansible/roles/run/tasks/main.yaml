@@ -1,7 +1,16 @@
-- name: Start ELK and DB
-  shell: ./elk-db.sh
+- name: Ensure the script is executable
+  command: chmod +x elk-db-start.sh start.sh
   args:
-    chdir: /path/to/scripts
+    chdir: "{{ (playbook_dir + '/../k8s') | realpath }}"
+- name: Start ELK and DB
+  shell: ./elk-db-start.sh
+  args:
+    chdir: "{{ (playbook_dir + '/../k8s') | realpath }}"
+  register: elk_db_start
+
+- name: Show ELK and DB start output
+  debug:
+    var: elk_db_start.stdout_lines
 
 - name: Wait 60 seconds for ELK and DB to initialize
   pause:
@@ -10,4 +19,10 @@
 - name: Start application services and ingress
   shell: ./start.sh
   args:
-    chdir: /path/to/scripts
+    chdir: "{{ (playbook_dir + '/../k8s') | realpath }}"
+  register: app_start
+
+- name: Show application start output
+  debug:
+    var: app_start.stdout_lines
+    
